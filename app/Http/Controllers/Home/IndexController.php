@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers\Home;
+<?php 
+
+namespace App\Http\Controllers\Home;
 
 use Request;
 
@@ -9,7 +11,7 @@ class IndexController extends Controller
      */
     public function index()
     {
-        die('index');
+         return view('welcome');
     }
 
     /**
