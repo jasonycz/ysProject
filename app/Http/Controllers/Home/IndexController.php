@@ -7,7 +7,7 @@ use Request;
 class IndexController extends Controller
 {
     /**
-     * 博客首页
+     *  加载试图
      */
     public function index()
     {
