@@ -13,3 +13,5 @@ $routesManager->admin()->www();
 Route::get('/', 'Home\IndexController@index'); 
 //yangping's code begin
 Route::post('user/login', 'Admin\StudioUserController@login');
+//头像上传接口
+Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait');
