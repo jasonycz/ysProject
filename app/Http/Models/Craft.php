@@ -22,6 +22,7 @@ class Craft extends Model
 			$crafts = DB::table('craft_img')
                     ->where('studio_id',$studioId)
                     ->get();
+            return $crafts;
 		}
 		return null;
 	}
