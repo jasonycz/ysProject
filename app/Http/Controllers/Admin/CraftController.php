@@ -51,5 +51,64 @@ class CraftController extends Controller
 	       		'result' => 'false',
     		]); 
 	}
+	/**查看发布后的单个作品
+	*input: 工作室id,作品id,及类型,默认为1时间轴,2,文章
+	*/
+	public function showProduction(Request $request)
+	{
+		$studio_id = $request->input('studio_id');
+		$craft_id = $request->input('craft_id');
+		$type = $request->input('type',1);
+		switch ($type) {
+			case 2:
+				$data = $this->selectArticle($studio_id,$craft_id);
+				break;
+			default:
+				$data = $this->selectProcess($studio_id,$craft_id);
+				break;
+		}
+		if(empty($data)){
+			return response()->json([
+	       		'errNo' => ErrorCode::COMMON_EMPTY_DATA,
+	       		'errMsg' => '数据为空',
+	       		'result' => '',
+    		]);
+		}else{
+			return response()->json([
+	       		'errNo' => ErrorCode::COMMON_OK,
+	       		'errMsg' => '数据列表',
+	       		'result' => $data,
+    		]);
+		}
+	}
+	//查询玉件加工过程表
+	private function selectProcess($studio_id,$craft_id)
+	{
+		 $process = new CraftProcess();
+		 $img = new CraftImg();
+		 $params['studio_id'] = $studio_id;
+		 $params['craft_id'] = $craft_id;
+ 		 $results = $process->selectProcess($params);
+ 		 if(!empty($results)){
+ 		 	foreach($results as $kr=>$vr){
+ 		 		$sub = $img->selectYsImg($vr['process_img'],$studio_id);
+ 		 	}
+ 		 	$results['sub'] = $sub;
+ 		 	return $results;
+ 		 }else{
+ 		 	return null;
+ 		 }
+	}
+	//查询玉件文章
+	private function selectArticle($studio_id,$craft_id)
+	{
+		$article = new StudioArticle()
+		$posts = $article->selectArticle(array('studio_id'=>$studio_id,'craft_id'=>$craft_id));
+		if(!empty($posts)){
+			return $posts;
+		}else{
+			return null;
+		}
+	}
 }
 ?>

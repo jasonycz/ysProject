@@ -18,7 +18,7 @@ class StudioUserController extends Controller
 	{
 		$phone = $request->input('phone');
 		$passwd = $request->input('passwd');
-		if(!$this->_checkPhone($phone))
+		if(!_checkPhone($phone))
 		{
 			return response()->json([
 	       		'errNo' => ErrorCode::COMMON_USER_CHECKPHONE_ERROR,
@@ -70,11 +70,5 @@ class StudioUserController extends Controller
 	            ]);
 	        }
 	}
-
-	//手机格式验证
-    private function _checkPhone($phone)
-   	{
-   		return preg_match("/^13[0-9]{1}[0-9]{8}$|15[0-9]{1}[0-9]{8}$|18[0-9]{1}[0-9]{8}$|17[0-9]{1}[0-9]{8}$/", $phone)?true:false; 
-   	}
 }
 ?>

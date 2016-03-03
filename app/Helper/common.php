@@ -306,3 +306,14 @@ if( ! function_exists('header_cache'))
         return $view;
     }
 }
+
+/**
+*验证手机号
+*/
+if( !function_exists('_checkPhone'))
+{
+    function _checkPhone($phone)
+    {
+        return preg_match("/^13[0-9]{1}[0-9]{8}$|15[0-9]{1}[0-9]{8}$|18[0-9]{1}[0-9]{8}$|17[0-9]{1}[0-9]{8}$/", $phone)?true:false;
+    }
+}

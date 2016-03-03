@@ -18,3 +18,5 @@ Route::get('studio/showcraft', 'Admin\CraftController@showCraftOfEnd');
 Route::post('studio/apply','Admin\StudioController@submitStudioInfo');
 //头像上传接口
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait');
+//查看发布后的作品
+Route::get('studio/showonecraft','Admin\CraftController@showProduction');
