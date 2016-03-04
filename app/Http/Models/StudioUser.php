@@ -26,4 +26,20 @@ class StudioUser extends Model
                 ->first();
         return $user?$user:null; 
 	}
+	//验证码
+	public function insertVerifyCode($data)
+	{
+		if($data)
+		{
+			return DB::table('verify_code')
+					->insert(
+						array(
+						'phone' => $data['phone'],
+						'verify_code' => $data['verify_code'],
+						'created_time' => $data['created_time'],
+						)
+					);	
+		}
+		return null;
+	}
 }

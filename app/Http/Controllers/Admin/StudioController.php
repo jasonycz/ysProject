@@ -40,6 +40,16 @@ class StudioController extends Controller
 		if($data)
 		{
 			$studio = new Studio();
+			$studioInfo = $studio->queryStudioInfo($data);
+			var_dump($studioInfo);
+			if($studioInfo)
+			{
+				return response()->json([
+	       			'errNo' => ErrorCode::COMMON_STUDIO_EXIST,
+	       			'errMsg' => '工作室已经存在',
+	       			'result' => 'false',
+    			]); 
+			}
 			$res = $studio->submitStudioInfo($data);
 			if($res)
 			{

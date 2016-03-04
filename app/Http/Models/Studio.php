@@ -11,6 +11,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Studio extends Model
 {
+	//查询工作室是否存在
+	public function queryStudioInfo($data)
+	{
+		if($data)
+		{
+			$res = DB::table('studio')
+					->where('tel',$data['tel'])
+					->first();
+			return $res;
+		}
+		return null;
+	}
 	//填写工作室申请信息
 	public function submitStudioInfo($data)
 	{
