@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class StudioUser extends Model
 {
 	protected $table = 'studio_users';
+	//通过user_id获取用户
+	public function getUserById($userId)
+	{
+		  $user = DB::table($this->table)
+                    ->where('id',$userId)
+                    ->first();
+            return  $user; 
+	}
 	//通过手机号获得用户
 	public function getUserByPhone($phone)
 	{ 
@@ -26,7 +34,7 @@ class StudioUser extends Model
                 ->first();
         return $user?$user:null; 
 	}
-	//验证码
+	//插入验证码
 	public function insertVerifyCode($data)
 	{
 		if($data)
@@ -42,4 +50,52 @@ class StudioUser extends Model
 		}
 		return null;
 	}
+	//获取验证码
+	public function getVerifyCode($data)
+	{
+		if($data)
+		{
+			return DB::table($this->table)
+				->where('phone',$data['phone'])
+				->orderBy('id','desc')
+				->first();
+		}else
+		{
+			return null;
+		}
+	}
+
+	//重置密码
+	public function resetPasswordPhone($data)
+    {
+        $salt = $this->saltCode();
+        return $userInfo = DB::table($this->table)
+                ->where('user_name', $data['phone'])
+                ->update(
+                array(
+                    'password' => md5(crypt($data['password'], $salt)),
+                    'salt' => $salt,
+                )
+            );
+    }
+    //检查密码是否正确
+    public function checkPassword($userId,$password)
+    {
+        if ($usr = $this->getUserByName($userName)) {
+            $user = DB::table($this->table)
+                ->where([
+                    'id' => $userId,
+                    'password' => md5(crypt($password, $usr->salt))
+                ])
+                ->first();
+            if($user)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

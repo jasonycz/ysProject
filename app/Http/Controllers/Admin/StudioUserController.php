@@ -71,9 +71,8 @@ class StudioUserController extends Controller
 	            ]);
 	        }
 	}
-	   //this is yangping's code begin 
-    //app注册
-    /**短信验证
+    /**
+    *短信验证
     */
 
     public function getVerify(Request $request)
@@ -114,6 +113,89 @@ class StudioUserController extends Controller
              return response()->json([
                     'errNo' => ErrorCode::COMMON_USER_CHECKPHONE_ERROR,
                     'errMsg' => '手机号格式不正确',
+                    'result' => null,
+                ]);  
+        }
+    }
+    //用户密码重置,忘记密码
+    public function resetPasswordPhone(Request $req)
+    {
+        $data['phone'] = $req->input('phone');
+        $data['password'] = $req->input('password');
+        $data['verify_code'] = $req->input('verify_code');
+        $user = new User();
+        $studioUser = new StudioUser();
+        $code = $studioUser->getVerifyCode($data);
+        if(!$code)
+        {
+                return response()->json([
+                    'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
+                    'errMsg' => '验证码不正确或者超时',
+                    'result' => null,
+                ]);
+        }
+        $time_differ = time() - $code->created_time -600000;
+        if($code->verify_code != $data['verify_code'] || $time_differ > 0)
+        {
+               return response()->json([
+                    'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
+                    'errMsg' => '验证码不正确或者超时',
+                    'result' => null,
+                ]);  
+        }
+        $userInfo = $studioUser->getUserByPhone($data['phone']);
+        if (!$result)
+        {
+            return response()->json([
+                    'errNo' => ErrorCode::COMMON_RESET_ERROR,
+                    'errMsg' => '重置密码失败',
+                    'result' => null,
+                ]);
+        }
+        if($studioUser->resetPasswordPhone($data))
+        {
+            $res['user_id'] = $userInfo->id;
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_OK,
+                'errMsg' => '重置密码成功',
+                'result' => [$res],
+            ]);       
+        }else
+        {
+               return response()->json([
+                    'errNo' => ErrorCode::COMMON_REGISTER_ERROR,
+                    'errMsg' => '重置密码失败',
+                    'result' => null,
+                ]);  
+        }
+    }
+    //用户密码重置，知道密码
+    public function resetPassword(Request $req)
+    {
+        $data['user_id'] = $req->input('user_id');
+        $data['old_password'] = $req->input('old_password');
+        $data['new_password'] = $req->input('new_password');
+        $studioUser = new StudioUser();
+        $userInfo = $studioUser->getUserById($data['user_id']);
+        if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
+        {
+                return response()->json([
+                    'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //10023
+                    'errMsg' => '密码错误',
+                    'result' => null,
+                ]);  
+        }
+        if($user->resetPassword($data) == false)
+        {
+            return response()->json([
+                    'errNo' => ErrorCode::COMMON_RESET_ERROR,
+                    'errMsg' => '重置密码失败',
+                    'result' => null,
+                ]);  
+        } else {
+            return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '重置密码成功',
                     'result' => null,
                 ]);  
         }

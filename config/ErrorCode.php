@@ -13,6 +13,8 @@ class ErrorCode {
    	const COMMON_STUDIO_ID_ERROR        = 200010; //工作室id非数字
    	const COMMON_STUDIO_EXIST           = 200011; //工作室已经存在
    	const COMMON_EMPTY_DATA             = 500010; //查看发布后的作品数据为空
+	const COMMON_GETVERTIFY_ERROR       = 600010; //获取验证码失败
+	const COMMON_VERTIFY_ERROR          = 600011; //验证码错误
 }
 ?>
 
