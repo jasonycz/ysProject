@@ -24,3 +24,5 @@ Route::post('studio/apply','Admin\StudioController@submitStudioInfo');
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait');
 //查看发布后的作品
 Route::get('studio/showonecraft','Admin\CraftController@showProduction');
+//雕件文章发布
+Route::post('studio/publish','Admin\CraftController@publishArticle');

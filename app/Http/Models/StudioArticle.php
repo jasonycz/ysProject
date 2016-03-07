@@ -25,6 +25,13 @@ class StudioArticle extends Model
 		}
 		return null;
 	}
+	//文章入库
+	public function addArticle($params)
+	{
+		$res = DB::table('studio_article')
+                    ->insert($params)
+        return $res;
+	}
 }
 
 ?>
