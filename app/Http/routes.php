@@ -16,6 +16,10 @@ Route::get('/', 'Home\IndexController@index');
 Route::post('user/getverify','Admin\StudioUserController@getVerify');
 //手机登陆接口
 Route::post('user/login', 'Admin\StudioUserController@login');
+//用户密码重置，知道密码
+Route::post('user/resetpwd','Admin\StudioUserController@resetPassword');
+//用户密码重置,忘记密码
+Route::post('user/resetbyphone','Admin\StudioUserController@resetPasswordPhone');
 //工作室成品展示
 Route::get('studio/showcraft', 'Admin\CraftController@showCraftOfEnd');
 //申请工作室信息

@@ -33,7 +33,8 @@ class Studio extends Model
                     	array(
                     		'name' => $data['name'],
                     		'tel' => $data['tel'],
-                    		'address' => $data['address']
+                    		'address' => $data['address'],
+                    		'describe' => $data['describe']
                     		)
                     	);
             return $res;

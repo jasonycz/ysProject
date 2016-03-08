@@ -1,5 +1,4 @@
 <?php
-
 /*
  *  Copyright (c) 2014 The CCP project authors. All Rights Reserved.
  *
@@ -15,29 +14,29 @@
 
 namespace App\Http\Models\sms;
 class REST {
-	private $AccountSid;
-	private $AccountToken;
-	private $AppId;
-	private $SubAccountSid;
-	private $SubAccountToken;
-	private $VoIPAccount;
-	private $VoIPPassword;  
-	private $ServerIP;
-	private $ServerPort;
-	private $SoftVersion;
-	private $Batch;  //时间sh
-	private $BodyType = "xml";//包体格式，可填值：json 、xml
-	private $enabeLog = true; //日志开关。可填值：true、
-	private $Filename="../storage/logs/rest.log.txt"; //日志文件
-	private $Handle; 
-	function __construct($ServerIP,$ServerPort,$SoftVersion)	
-	{
-		$this->Batch = date("YmdHis");
-		$this->ServerIP = $ServerIP;
-		$this->ServerPort = $ServerPort;
-		$this->SoftVersion = $SoftVersion;
+  private $AccountSid;
+  private $AccountToken;
+  private $AppId;
+  private $SubAccountSid;
+  private $SubAccountToken;
+  private $VoIPAccount;
+  private $VoIPPassword;  
+  private $ServerIP;
+  private $ServerPort;
+  private $SoftVersion;
+  private $Batch;  //时间sh
+  private $BodyType = "xml";//包体格式，可填值：json 、xml
+  private $enabeLog = true; //日志开关。可填值：true、
+  private $Filename="../storage/logs/rest.log.txt"; //日志文件
+  private $Handle; 
+  function __construct($ServerIP,$ServerPort,$SoftVersion)  
+  {
+    $this->Batch = date("YmdHis");
+    $this->ServerIP = $ServerIP;
+    $this->ServerPort = $ServerPort;
+    $this->SoftVersion = $SoftVersion;
         $this->Handle = fopen($this->Filename, 'a');
-	} 
+  } 
    /**
     * 设置主帐号
     * 
@@ -119,8 +118,8 @@ class REST {
     * 创建子帐号
     * @param friendlyName 子帐号名称
     */
-	  function createSubAccount($friendlyName)
-	  {
+    function createSubAccount($friendlyName)
+    {
         //主帐号鉴权信息验证，对必选参数进行判空。
         $auth=$this->accAuth();
         if($auth!=""){
@@ -159,7 +158,7 @@ class REST {
 //            $datas->statusMsg = '返回包体错误'; 
 //        }
         return $datas;
-	  }
+    }
         
     /**
     * 获取子帐号
@@ -183,7 +182,7 @@ class REST {
         if($this->BodyType=="json"){
            $body= "{'appId':'$this->AppId','startNo':'$startNo','offset':'$offset'}";
         }else{
-        	 $body="
+           $body="
             <SubAccount>
               <appId>$this->AppId</appId>
               <startNo>$startNo</startNo>  
@@ -232,7 +231,7 @@ class REST {
         if($this->BodyType=="json"){
            $body= "{'appId':'$this->AppId','friendlyName':'$friendlyName'}";
         }else{
-        	 $body="
+           $body="
             <SubAccount>
               <appId>$this->AppId</appId>
               <friendlyName>$friendlyName</friendlyName>
@@ -270,7 +269,7 @@ class REST {
     * @param datas 内容数据
     * @param $tempId 模板Id
     */       
-    function sendSMS($to,$datas,$tempId)
+    function sendSeeyouSMS($to,$datas,$tempId)
     {
         //主帐号鉴权信息验证，对必选参数进行判空。
         $auth=$this->accAuth();
@@ -336,10 +335,10 @@ class REST {
     * @param to 被叫电话号码
     * @param customerSerNum 被叫侧显示的客服号码  
     * @param fromSerNum 主叫侧显示的号码
-	  * @param promptTone 自定义回拨提示音 
-	  * @param userData 第三方私有数据  
-	  * @param maxCallTime 最大通话时长
-	  * @param hangupCdrUrl 实时话单通知地址 
+    * @param promptTone 自定义回拨提示音 
+    * @param userData 第三方私有数据  
+    * @param maxCallTime 最大通话时长
+    * @param hangupCdrUrl 实时话单通知地址 
     * @param alwaysPlay 是否一直播放提示音
     * @param terminalDtmf 用于终止播放promptTone参数定义的提示音
     * @param needBothCdr 是否给主被叫发送话单
@@ -347,8 +346,8 @@ class REST {
     * @param countDownTime 设置倒计时时间 
     * @param countDownPrompt 倒计时时间到后播放的提示音     
     */
-	  function callBack($from,$to,$customerSerNum,$fromSerNum,$promptTone,$alwaysPlay,$terminalDtmf,$userData,$maxCallTime,$hangupCdrUrl,$needBothCdr,$needRecord,$countDownTime,$countDownPrompt)
-	  {   
+    function callBack($from,$to,$customerSerNum,$fromSerNum,$promptTone,$alwaysPlay,$terminalDtmf,$userData,$maxCallTime,$hangupCdrUrl,$needBothCdr,$needRecord,$countDownTime,$countDownPrompt)
+    {   
         //子帐号鉴权信息验证，对必选参数进行判空。
         $auth=$this->subAuth();
         if($auth!=""){
@@ -366,9 +365,9 @@ class REST {
                      <customerSerNum>$customerSerNum</customerSerNum>
                      <fromSerNum>$fromSerNum</fromSerNum>
                      <promptTone>$promptTone</promptTone>
-					           <userData>$userData</userData>
-					           <maxCallTime>$maxCallTime</maxCallTime>
-					           <hangupCdrUrl>$hangupCdrUrl</hangupCdrUrl>
+                     <userData>$userData</userData>
+                     <maxCallTime>$maxCallTime</maxCallTime>
+                     <hangupCdrUrl>$hangupCdrUrl</hangupCdrUrl>
                      <alwaysPlay>$alwaysPlay</alwaysPlay>
                      <terminalDtmf>$terminalDtmf</terminalDtmf>
                      <needBothCdr>$needBothCdr</needBothCdr>
@@ -401,7 +400,7 @@ class REST {
 //            $datas->statusMsg = '返回包体错误'; 
 //        }
         return $datas;
-	}
+  }
     
 
     

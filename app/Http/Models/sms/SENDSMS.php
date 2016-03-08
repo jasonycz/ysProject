@@ -4,7 +4,7 @@ namespace App\Http\Models\sms;
 class SENDSMS
 {
 
-    public static function  sendSMS($to, $datas, $tempId)
+    public static function  sendSeeyouSMS($to, $datas, $tempId)
     {
         $accountSid = '8a48b5514fa577af014fa5ab5aed00fc';
         $accountToken = 'da915b84e73d44858f909a478d4480bc';
@@ -16,7 +16,7 @@ class SENDSMS
         $rest->setAccount($accountSid, $accountToken);
         $rest->setAppId($appId);
 
-        return $rest->sendSMS($to, $datas, $tempId);
+        return $rest->sendSeeyouSMS($to, $datas, $tempId);
     }
 }
 

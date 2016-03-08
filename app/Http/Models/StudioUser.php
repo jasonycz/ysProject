@@ -8,11 +8,40 @@ use Illuminate\Database\Eloquent\Model;
 class StudioUser extends Model
 {
 	protected $table = 'studio_users';
+	public function saltCode($len = 6)
+    {
+        $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        mt_srand((double)microtime() * 1000000 * getmypid());
+        $code = '';
+        while (strlen($code) < $len)
+            $code .= substr($chars, (mt_rand() % strlen($chars)), 1);
+        return $code;
+    }
+    //创建用户
+    public function createUser($data)
+    {
+    	$salt = $this->saltCode();
+    	if($data)
+    	{
+    		$user = DB::table($this->table)->insert(
+    				array(
+                    	'studio_id' => $data['studio_id'],
+                    	'phone' => $data['tel'],
+                    	'user_name' => $data['user_name'],
+                    	'pwd' => md5(crypt($data['pwd'], $salt)),
+                    	'salt' => $salt,
+                    	'is_admin' => 0
+                		)
+            		);
+    		return $user;
+    	}
+    	return null;
+    }
 	//通过user_id获取用户
 	public function getUserById($userId)
 	{
 		  $user = DB::table($this->table)
-                    ->where('id',$userId)
+                    ->where('user_id',$userId)
                     ->first();
             return  $user; 
 	}
@@ -27,11 +56,15 @@ class StudioUser extends Model
 	//手机登陆验证
 	public function logInCheck($phone,$passwd)
 	{ 
-		$user = DB::table($this->table)
+		 if($em = $this->getUserByPhone($phone))
+		 {
+			$user = DB::table($this->table)
                 ->where([
                             'phone'=>$phone,
-                            'pwd'=>$passwd])
+                            'pwd'=> md5(crypt($passwd, $em->salt))
+                        ])
                 ->first();
+		 } 
         return $user?$user:null; 
 	}
 	//插入验证码
@@ -66,14 +99,14 @@ class StudioUser extends Model
 	}
 
 	//重置密码
-	public function resetPasswordPhone($data)
+	public function resetPassword($data)
     {
         $salt = $this->saltCode();
         return $userInfo = DB::table($this->table)
-                ->where('user_name', $data['phone'])
+                ->where('user_id', $data['user_id'])
                 ->update(
                 array(
-                    'password' => md5(crypt($data['password'], $salt)),
+                    'pwd' => md5(crypt($data['new_password'], $salt)),
                     'salt' => $salt,
                 )
             );
@@ -81,11 +114,11 @@ class StudioUser extends Model
     //检查密码是否正确
     public function checkPassword($userId,$password)
     {
-        if ($usr = $this->getUserByName($userName)) {
+        if ($usr = $this->getUserById($userId)) {
             $user = DB::table($this->table)
                 ->where([
-                    'id' => $userId,
-                    'password' => md5(crypt($password, $usr->salt))
+                    'user_id' => $userId,
+                    'pwd' => md5(crypt($password, $usr->salt))
                 ])
                 ->first();
             if($user)

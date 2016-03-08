@@ -85,7 +85,7 @@ class StudioUserController extends Controller
         $studioUser = new StudioUser();
         //$int = DARRAY::sms_rand(6);
         if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSMS($data['phone'], array($int, '5'), "35155");
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "35155");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
@@ -144,6 +144,7 @@ class StudioUserController extends Controller
                 ]);  
         }
         $userInfo = $studioUser->getUserByPhone($data['phone']);
+        $data['user_id'] = $userInfo->user_id;
         if (!$result)
         {
             return response()->json([
@@ -152,7 +153,7 @@ class StudioUserController extends Controller
                     'result' => null,
                 ]);
         }
-        if($studioUser->resetPasswordPhone($data))
+        if($studioUser->resetPassword($data))
         {
             $res['user_id'] = $userInfo->id;
             return response()->json([
@@ -185,7 +186,7 @@ class StudioUserController extends Controller
                     'result' => null,
                 ]);  
         }
-        if($user->resetPassword($data) == false)
+        if($studioUser->resetPasswordPhone($data) == false)
         {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
