@@ -19,7 +19,7 @@ return array(
     'App\\Http\\Controllers\\Home\\IndexController' => $baseDir . '/app/Http/Controllers/Home/IndexController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Controllers/Middleware/Authenticate.php',
-    'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Controllers/Middleware/EncryptCookies.php',
+    'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',
     'App\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Controllers/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Requests\\Request' => $baseDir . '/app/Http/Requests/Request.php',

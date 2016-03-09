@@ -144,7 +144,7 @@ class CraftController extends Controller
 	//查询玉件文章
 	private function selectArticle($studio_id,$craft_id)
 	{
-		$article = new StudioArticle()
+		$article = new StudioArticle();
 		$posts = $article->selectArticle(array('studio_id'=>$studio_id,'craft_id'=>$craft_id));
 		if(!empty($posts)){
 			return $posts;

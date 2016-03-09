@@ -6,7 +6,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Log; 
+use Log;
+use Session;
 use ErrorCode;
 use Illuminate\Http\Request;
 use App\Http\Models\StudioUser;
@@ -33,6 +34,7 @@ class StudioUserController extends Controller
 
 		if($user)
 		{
+            $request->session()->put('userInfo',$user);
 			return response()->json([
            		'errNo' => ErrorCode::COMMON_OK,
            		'errMsg' => '',
@@ -82,8 +84,7 @@ class StudioUserController extends Controller
         $int = rand(pow(10,($length-1)), pow(10,$length)-1);
         $data['verify_code'] = $int;
         $data['created_time'] = time();
-        $studioUser = new StudioUser();
-        //$int = DARRAY::sms_rand(6);
+        $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
             $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "35155");
             if($result->statusCode!=0) {

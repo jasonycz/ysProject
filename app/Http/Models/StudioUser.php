@@ -28,7 +28,7 @@ class StudioUser extends Model
                     	'studio_id' => $data['studio_id'],
                     	'phone' => $data['tel'],
                     	'user_name' => $data['user_name'],
-                    	'pwd' => md5(crypt($data['pwd'], $salt)),
+                    	'pwd' => crypt($data['pwd'], $salt),
                     	'salt' => $salt,
                     	'is_admin' => 0
                 		)
@@ -61,11 +61,12 @@ class StudioUser extends Model
 			$user = DB::table($this->table)
                 ->where([
                             'phone'=>$phone,
-                            'pwd'=> md5(crypt($passwd, $em->salt))
+                            'pwd'=> crypt($passwd, $em->salt)
                         ])
                 ->first();
+                return $user?$user:null; 
 		 } 
-        return $user?$user:null; 
+        return null;
 	}
 	//插入验证码
 	public function insertVerifyCode($data)
@@ -106,7 +107,7 @@ class StudioUser extends Model
                 ->where('user_id', $data['user_id'])
                 ->update(
                 array(
-                    'pwd' => md5(crypt($data['new_password'], $salt)),
+                    'pwd' => crypt($data['new_password'], $salt),
                     'salt' => $salt,
                 )
             );
@@ -118,7 +119,7 @@ class StudioUser extends Model
             $user = DB::table($this->table)
                 ->where([
                     'user_id' => $userId,
-                    'pwd' => md5(crypt($password, $usr->salt))
+                    'pwd' => crypt($password, $usr->salt)
                 ])
                 ->first();
             if($user)
