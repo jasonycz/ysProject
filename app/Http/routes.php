@@ -23,7 +23,7 @@ Route::post('user/resetbyphone','Admin\StudioUserController@resetPasswordPhone')
 //工作室成品展示
 Route::get('studio/showcraft', 'Admin\CraftController@showCraftOfEnd')->middleware(['sessionLoginVerify']);
 //申请工作室信息
-Route::post('studio/apply','Admin\StudioController@submitStudioInfo')->middleware(['sessionLoginVerify']);
+Route::post('studio/apply','Admin\StudioController@submitStudioInfo');//->middleware(['sessionLoginVerify']);
 //头像上传接口
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait')->middleware(['sessionLoginVerify']);
 //查看发布后的作品
