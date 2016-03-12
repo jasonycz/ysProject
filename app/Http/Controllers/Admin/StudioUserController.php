@@ -136,7 +136,7 @@ class StudioUserController extends Controller
         $data['created_time'] = time();
         $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "35155");
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "1");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
@@ -237,7 +237,7 @@ class StudioUserController extends Controller
                     'result' => null,
                 ]);  
         }
-        if($studioUser->resetPasswordPhone($data) == false)
+        if($studioUser->resetPassword($data) == false)
         {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
@@ -248,7 +248,7 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '重置密码成功',
-                    'result' => null,
+                    'result' => true,
                 ]);  
         }
     }
