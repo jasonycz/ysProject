@@ -12,17 +12,33 @@ use Illuminate\Http\Request;
 use App\Http\Models\Craft;
 class CraftController extends Controller
 {
+	private $loginId;
+	private $studioId;
+	public function __construct(){
+		$sessionUser = $request->session()->get('userInfo');
+		print_r($sessionUser);
+		$this->loginId = $sessionUser['user_id'];
+		$this->studioId = $sessionUser['studio_id'];
+		if(empty($sessionUser) || !array_key_exists('user_id', $sessionUser) || empty($sessionUser['user_id']))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_NOT_LOGIN,
+                'errMsg' => '用户未登录',
+                'result' => null,
+            ]);
+        }
+	}
 	/**已发布成品展示
 	*input: 工作室id
 	*output: 雕件ID，图片url，雕件的描述信息
 	*/
 	public function showCraftOfEnd(Request $request)
 	{
-		$studioId = $request->input('studio_id');
-		if(is_numeric($studioId))
+		// $studioId = $request->input('studio_id');
+		if(is_numeric($this->studioId))
 		{
 			$craft = new Craft();
-			$crafts = $craft->queryCraftOfEnd($studioId);
+			$crafts = $craft->queryCraftOfEnd($this->studioId);
 			//crafts = 成品雕件
 			if($crafts)
 			{
@@ -58,9 +74,9 @@ class CraftController extends Controller
 		$title = $request->input('title');
 		$author = $request->input('author');
 		$createDate = $request->input('createdate');
-		$createid = $request->input('createid','','int');
+		// $createid = $request->input('createid','','int');
 		$content = $request->input('content');
-		$studio_id = $request->input('studio_id','','int');
+		// $studio_id = $request->input('studio_id','','int');
 		$craft_id = $request->input('craft_id','','int');
 		$ispublish = $request->input('publish',0,'int');
 		//需要增加必填项的判断
@@ -74,9 +90,10 @@ class CraftController extends Controller
 			$params['article_time'] = $createDate;
 		}
 		$params['content'] = $content;
-		$params['studio_id'] = $studio_id;
+		$params['studio_id'] = $this->studioId
 		$params['craft_id'] = $craft_id;
 		$params['ispublish'] = $ispublish;
+		$params['studio_user_id'] = $this->loginId;
 		$posts = new StudioArticle();
 		$lastid = $posts->addArticle($params);
 		if($lastid >= 1){
@@ -98,15 +115,15 @@ class CraftController extends Controller
 	*/
 	public function showProduction(Request $request)
 	{
-		$studio_id = $request->input('studio_id');
+		// $studio_id = $request->input('studio_id');
 		$craft_id = $request->input('craft_id');
 		$type = $request->input('type',1);
 		switch ($type) {
 			case 2:
-				$data = $this->selectArticle($studio_id,$craft_id);
+				$data = $this->selectArticle($this->studioId,$craft_id);
 				break;
 			default:
-				$data = $this->selectProcess($studio_id,$craft_id);
+				$data = $this->selectProcess($this->studioId,$craft_id);
 				break;
 		}
 		if(empty($data)){
