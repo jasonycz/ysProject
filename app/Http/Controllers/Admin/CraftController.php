@@ -10,15 +10,15 @@ use Log;
 use ErrorCode;
 use Illuminate\Http\Request;
 use App\Http\Models\Craft;
+use App\Http\Models\StudioArticle;
+use App\Http\Models\CraftProcess;
+use App\Http\Models\CraftImg;
 class CraftController extends Controller
 {
 	private $loginId;
 	private $studioId;
-	public function __construct(){
+	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
-		print_r($sessionUser);
-		$this->loginId = $sessionUser['user_id'];
-		$this->studioId = $sessionUser['studio_id'];
 		if(empty($sessionUser) || !array_key_exists('user_id', $sessionUser) || empty($sessionUser['user_id']))
         {
             return response()->json([
@@ -27,6 +27,8 @@ class CraftController extends Controller
                 'result' => null,
             ]);
         }
+        $this->loginId = $sessionUser['user_id'];
+		$this->studioId = $sessionUser['studio_id'];
 	}
 	/**已发布成品展示
 	*input: 工作室id
@@ -83,14 +85,14 @@ class CraftController extends Controller
 		$params['article_name'] = $title;
 		$params['author'] = $author;
 		$params['studio_user_id'] = $title;
-		$params['created_time'] = time();
+		$params['created_time'] = date('Y-m-d H:i:s',time());
 		if(empty($createDate)){
-			$params['article_time'] = time();	
+			$params['article_time'] = date('Y-m-d H:i:s',time());	
 		}else{
 			$params['article_time'] = $createDate;
 		}
 		$params['content'] = $content;
-		$params['studio_id'] = $this->studioId
+		$params['studio_id'] = $this->studioId;
 		$params['craft_id'] = $craft_id;
 		$params['ispublish'] = $ispublish;
 		$params['studio_user_id'] = $this->loginId;

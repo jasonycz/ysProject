@@ -53,7 +53,7 @@ class StudioUserController extends Controller
     {
         $username = $request->input('uname');
         $sessionUser = $request->session()->get('userInfo');
-        if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']))
+        if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']) || $username !== $sessionUser['user_name'])
         {
             return response()->json([
                 'errNo' => ErrorCode::COMMON_NOT_LOGIN,

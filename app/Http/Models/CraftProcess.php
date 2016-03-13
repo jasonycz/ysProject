@@ -18,7 +18,7 @@ class CraftProcess extends Model
 		{
 			$res = DB::table('craft_process')
                     ->where('studio_id',$params['studio_id'])
-                    ->andWhere('craft_id',$params['craft_id'])
+                    ->Where('craft_id',$params['craft_id'])
                     ->select('process_class','describe','process_img','created_time')
                     ->get();
             return $res;
