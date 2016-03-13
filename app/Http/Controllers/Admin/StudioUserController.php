@@ -172,11 +172,11 @@ class StudioUserController extends Controller
         }
     }
     //用户密码重置，知道密码
-    public function resetPassword(Request $req)
+    public function resetPassword(Request $request)
     {
-        $data['user_id'] = $req->input('user_id');
-        $data['old_password'] = $req->input('old_password');
-        $data['new_password'] = $req->input('new_password');
+        $data['user_id'] = $request->input('user_id');
+        $data['old_password'] = $request->input('old_password');
+        $data['new_password'] = $request->input('new_password');
         $studioUser = new StudioUser();
         $userInfo = $studioUser->getUserById($data['user_id']);
         if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
