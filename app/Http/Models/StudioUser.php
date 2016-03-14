@@ -37,6 +37,14 @@ class StudioUser extends Model
     	}
     	return null;
     }
+    //根据user_name 检查用户是否已存在
+    public function checkExists($uname)
+    {
+        $user = DB::table($this->table)
+                ->where('user_name',$uname)
+                ->first();
+        return  $user; 
+    }
 	//通过user_id获取用户
 	public function getUserById($userId)
 	{

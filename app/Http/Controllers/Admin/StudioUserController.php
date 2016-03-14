@@ -48,7 +48,56 @@ class StudioUserController extends Controller
        		'result' => 'false',
     	]); 
 	}
+    //检查用户是否已登录
+    public function checkUserLogined(Request $request)
+    {
+        $sessionUser = $request->session()->get('userInfo');
+        if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']) || empty($sessionUser['user_id']))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_NOT_LOGIN,
+                'errMsg' => '用户未登录',
+                'result' => null,
+            ]);
+        }else{
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_OK,
+                'errMsg' => '用户已登录',
+                'result' => array('uname'=>$sessionUser['user_name'],'userid'=>$sessionUser['user_id'])
+            ]);
+        }
+    }
+    //检查用户名是否重复
+    public function checkUnameExists(Request $request)
+    {
+        $uname = $request->input('uname');
+        if(empty($uname) || !isset($uname))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_USER_EMPTY,
+                'errMsg' => '用户名不能为空',
+                'result' => 'false',
+            ]);
+        }
+        $studioUser = new StudioUser();
+        $isExists = $studioUser->checkExists($uname);
+        if(!empty($isExists))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_USER_EXISTS,
+                'errMsg' => '用户名已存在',
+                'result' => 'false',
+            ]); 
+        }else
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_OK,
+                'errMsg' => '可以使用',
+                'result' => 'false',
+            ]); 
+        }
 
+    }
 	public function uploadHeadPortrait(Request $request)
 	{
 			$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
@@ -86,7 +135,7 @@ class StudioUserController extends Controller
         $data['created_time'] = time();
         $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "35155");
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "1");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
@@ -172,11 +221,11 @@ class StudioUserController extends Controller
         }
     }
     //用户密码重置，知道密码
-    public function resetPassword(Request $req)
+    public function resetPassword(Request $request)
     {
-        $data['user_id'] = $req->input('user_id');
-        $data['old_password'] = $req->input('old_password');
-        $data['new_password'] = $req->input('new_password');
+        $data['user_id'] = $request->input('user_id');
+        $data['old_password'] = $request->input('old_password');
+        $data['new_password'] = $request->input('new_password');
         $studioUser = new StudioUser();
         $userInfo = $studioUser->getUserById($data['user_id']);
         if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
@@ -187,7 +236,7 @@ class StudioUserController extends Controller
                     'result' => null,
                 ]);  
         }
-        if($studioUser->resetPasswordPhone($data) == false)
+        if($studioUser->resetPassword($data) == false)
         {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
@@ -198,7 +247,7 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '重置密码成功',
-                    'result' => null,
+                    'result' => true,
                 ]);  
         }
     }
