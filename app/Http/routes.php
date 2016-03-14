@@ -17,7 +17,7 @@ Route::post('user/getverify','Admin\StudioUserController@getVerify');
 //手机登陆接口
 Route::post('user/login', 'Admin\StudioUserController@login');
 //检查用户是否登录
-Route::post('user/checklogin','Admin\StudioUserController@checkUserLogined');
+Route::post('api/me','Admin\StudioUserController@checkUserLogined');
 //检查用户名是否重复
 Route::post('user/exists','Admin\StudioUserController@checkUnameExists');
 //用户密码重置，知道密码
