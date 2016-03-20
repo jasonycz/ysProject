@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudioArticle extends Model
 {
+	protected $table = 'studio_article';
 	//查询过程
 	public function selectArticle($params)
 	{
@@ -18,7 +19,8 @@ class StudioArticle extends Model
 		{
 			$res = DB::table('studio_article')
                     ->where('studio_id',$params['studio_id'])
-                    ->andWhere('craft_id',$params['craft_id'])
+                    ->where('craft_id',$params['craft_id'])
+                    ->where('ispublish',1)
                     ->select('article_name','author','created_time','content')
                     ->get();
             return $res;
@@ -29,7 +31,7 @@ class StudioArticle extends Model
 	public function addArticle($params)
 	{
 		$res = DB::table('studio_article')
-                    ->insert($params)
+                ->insert($params);
         return $res;
 	}
 }

@@ -48,7 +48,56 @@ class StudioUserController extends Controller
        		'result' => 'false',
     	]); 
 	}
+    //检查用户是否已登录
+    public function checkUserLogined(Request $request)
+    {
+        $sessionUser = $request->session()->get('userInfo');
+        if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']) || empty($sessionUser['user_id']))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_NOT_LOGIN,
+                'errMsg' => '用户未登录',
+                'result' => null,
+            ]);
+        }else{
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_OK,
+                'errMsg' => '用户已登录',
+                'result' => array('uname'=>$sessionUser['user_name'],'userid'=>$sessionUser['user_id'])
+            ]);
+        }
+    }
+    //检查用户名是否重复
+    public function checkUnameExists(Request $request)
+    {
+        $uname = $request->input('uname');
+        if(empty($uname) || !isset($uname))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_USER_EMPTY,
+                'errMsg' => '用户名不能为空',
+                'result' => 'false',
+            ]);
+        }
+        $studioUser = new StudioUser();
+        $isExists = $studioUser->checkExists($uname);
+        if(!empty($isExists))
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_USER_EXISTS,
+                'errMsg' => '用户名已存在',
+                'result' => 'false',
+            ]); 
+        }else
+        {
+            return response()->json([
+                'errNo' => ErrorCode::COMMON_OK,
+                'errMsg' => '可以使用',
+                'result' => 'false',
+            ]); 
+        }
 
+    }
 	public function uploadHeadPortrait(Request $request)
 	{
 			$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
