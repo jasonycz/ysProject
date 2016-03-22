@@ -26,5 +26,19 @@ class Craft extends Model
 		}
 		return null;
 	}
+	/**
+	*删除单个玉雕
+	*/
+	public function delCraft($craftId)
+	{
+		if($craftId)
+		{
+			$craft = DB::table('craft')
+					 ->where('craft_id',$craftId)
+					 ->update(['is_del'=>0]);
+			return $craft;
+		}
+		return null;
+	}
 }
 ?>

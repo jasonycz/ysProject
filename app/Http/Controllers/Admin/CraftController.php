@@ -142,6 +142,26 @@ class CraftController extends Controller
     		]);
 		}
 	}
+	//删除玉雕
+	public function delCraft(Request $request)
+	{
+		$craft_id = $request->input('craft_id');
+		$craft = new Craft();
+		$craft_stat = $craft->delCraft($craft_id);
+		if($craft_stat)
+		{
+			return response()->json([
+	       		'errNo' => ErrorCode::COMMON_OK,
+	       		'errMsg' => '',
+	       		'result' => 'true',
+    		]);
+		}
+		return response()->json([
+       		'errNo' => ErrorCode::COMMON_CRAFT_DEL_ERROR,
+       		'errMsg' => '删除玉雕失败',
+       		'result' => 'false',
+		]);
+	}
 	//查询玉件加工过程表
 	private function selectProcess($studio_id,$craft_id)
 	{

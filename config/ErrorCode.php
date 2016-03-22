@@ -20,7 +20,7 @@ class ErrorCode {
    	const COMMON_EMPTY_DATA             = 500010; //查看发布后的作品数据为空
 	const COMMON_GETVERTIFY_ERROR       = 600010; //获取验证码失败
 	const COMMON_VERTIFY_ERROR          = 600011; //验证码错误
-
+   const COMMON_CRAFT_DEL_ERROR        = 700010;  //删除玉雕失败
 }
 ?>
 

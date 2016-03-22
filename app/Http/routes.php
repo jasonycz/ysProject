@@ -34,3 +34,4 @@ Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPort
 Route::get('studio/showonecraft','Admin\CraftController@showProduction')->middleware(['sessionLoginVerify']);
 //雕件文章发布
 Route::post('studio/publish','Admin\CraftController@publishArticle')->middleware(['sessionLoginVerify']);
+Route::post('studio/delcraft','Admin\CraftController@delCraft');
