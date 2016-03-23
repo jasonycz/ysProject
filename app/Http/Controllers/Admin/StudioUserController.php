@@ -15,6 +15,13 @@ use App\Http\UpYun;
 use App\Http\Models\sms\SENDSMS;
 class StudioUserController extends Controller
 {
+    private $user_id;
+    private $studio_id;
+    public function __construct(Request $request){
+        $sessionUser = $request->session()->get('userInfo');
+        $this->user_id = $sessionUser['user_id'];
+        $this->studio_id = $sessionUser['studio_id'];
+    }
 	//使用手机号登陆，参数：手机号，密码
 	public function login(Request $request)
 	{
@@ -140,7 +147,7 @@ class StudioUserController extends Controller
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
                     'errMsg' => '获取验证码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
             }else{
                 $res = $studioUser->insertVerifyCode($data);
@@ -149,21 +156,21 @@ class StudioUserController extends Controller
                    return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
                     'errMsg' => '验证码插入数据库失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]); 
                 }
                 $smsmessage = $result->TemplateSMS;
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '验证成功',
-                    'result' =>  null,
+                    'result' =>  'true',
                 ]);           
             }
         } else {
              return response()->json([
                     'errNo' => ErrorCode::COMMON_USER_CHECKPHONE_ERROR,
                     'errMsg' => '手机号格式不正确',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
     }
@@ -181,7 +188,7 @@ class StudioUserController extends Controller
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
                     'errMsg' => '验证码不正确或者超时',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
         }
         $time_differ = time() - $code->created_time -600000;
@@ -190,7 +197,7 @@ class StudioUserController extends Controller
                return response()->json([
                     'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
                     'errMsg' => '验证码不正确或者超时',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
         $userInfo = $studioUser->getUserByPhone($data['phone']);
@@ -200,7 +207,7 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
         }
         if($studioUser->resetPassword($data))
@@ -216,7 +223,7 @@ class StudioUserController extends Controller
                return response()->json([
                     'errNo' => ErrorCode::COMMON_REGISTER_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
     }
@@ -233,7 +240,7 @@ class StudioUserController extends Controller
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //10023
                     'errMsg' => '密码错误',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
         if($studioUser->resetPassword($data) == false)
@@ -241,13 +248,13 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         } else {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '重置密码成功',
-                    'result' => true,
+                    'result' => 'true',
                 ]);  
         }
     }

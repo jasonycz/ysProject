@@ -15,20 +15,12 @@ use App\Http\Models\CraftProcess;
 use App\Http\Models\CraftImg;
 class CraftController extends Controller
 {
-	private $loginId;
-	private $studioId;
+	private $user_id;
+	private $studio_id;
 	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
-		if(empty($sessionUser) || !array_key_exists('user_id', $sessionUser) || empty($sessionUser['user_id']))
-        {
-            return response()->json([
-                'errNo' => ErrorCode::COMMON_NOT_LOGIN,
-                'errMsg' => '用户未登录',
-                'result' => null,
-            ]);
-        }
-        $this->loginId = $sessionUser['user_id'];
-		$this->studioId = $sessionUser['studio_id'];
+        $this->user_id = $sessionUser['user_id'];
+		$this->studio_id = $sessionUser['studio_id'];
 	}
 	/**已发布成品展示
 	*input: 工作室id

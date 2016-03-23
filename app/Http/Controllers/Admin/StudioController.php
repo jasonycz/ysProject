@@ -14,6 +14,13 @@ use App\Http\Models\StudioUser;
 //this controller is about studio
 class StudioController extends Controller
 {
+	private $user_id;
+	private $studio_id;
+	public function __construct(Request $request){
+		$sessionUser = $request->session()->get('userInfo');
+        $this->user_id = $sessionUser['user_id'];
+		$this->studio_id = $sessionUser['studio_id'];
+	}
 	/**
 	*studio submit identification info
 	*/
@@ -40,6 +47,24 @@ class StudioController extends Controller
 	       		'result' => 'false',
     		]); 
 		}
+		$code = $studioUser->getVerifyCode($data);
+        if(!$code)
+        {
+                return response()->json([
+                    'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
+                    'errMsg' => '验证码不正确或者超时',
+                    'result' => 'false',
+                ]);
+        }
+        $time_differ = time() - $code->created_time -600000;
+        if($code->verify_code != $data['verify_code'] || $time_differ > 0)
+        {
+               return response()->json([
+                    'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
+                    'errMsg' => '验证码不正确或者超时',
+                    'result' => 'false',
+                ]);  
+        }
 		if($data)
 		{
 			$studio = new Studio();
