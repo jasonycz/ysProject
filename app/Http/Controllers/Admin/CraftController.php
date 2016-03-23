@@ -19,8 +19,8 @@ class CraftController extends Controller
 	private $studio_id;
 	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
-        $this->user_id = $sessionUser['user_id'];
-		$this->studio_id = $sessionUser['studio_id'];
+        $this->user_id = $sessionUser->user_id;
+        $this->studio_id = $sessionUser->studio_id;
 	}
 	/**已发布成品展示
 	*input: 工作室id

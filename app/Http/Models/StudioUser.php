@@ -72,6 +72,7 @@ class StudioUser extends Model
                             'pwd'=> crypt($passwd, $em->salt)
                         ])
                 ->first();
+
                 return $user?$user:null; 
 		 } 
         return null;
@@ -97,7 +98,7 @@ class StudioUser extends Model
 	{
 		if($data)
 		{
-			return DB::table($this->table)
+			return DB::table('verify_code')
 				->where('phone',$data['phone'])
 				->orderBy('id','desc')
 				->first();

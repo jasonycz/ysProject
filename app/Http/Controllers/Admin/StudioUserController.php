@@ -19,8 +19,8 @@ class StudioUserController extends Controller
     private $studio_id;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
-        $this->user_id = $sessionUser['user_id'];
-        $this->studio_id = $sessionUser['studio_id'];
+        $this->user_id = $sessionUser->user_id;
+        $this->studio_id = $sessionUser->studio_id;
     }
 	//使用手机号登陆，参数：手机号，密码
 	public function login(Request $request)
@@ -38,15 +38,23 @@ class StudioUserController extends Controller
 
 		$studioUser = new StudioUser();
 		$user = $studioUser->logInCheck($phone,$passwd);
-
 		if($user)
 		{
             $request->session()->put('userInfo',$user);
-			return response()->json([
-           		'errNo' => ErrorCode::COMMON_OK,
-           		'errMsg' => '',
-           		'result' => 'true',
-        	]);
+            if($phone == $passwd)
+            {
+                return response()->json([
+                    'errNo' => ErrorCode::COMMON_USER_LOGIN_MODIFY,
+                    'errMsg' => '',
+                    'result' => 'true',
+                ]);
+            }
+            return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '',
+                    'result' => 'true',
+                ]);
+
 		} 
 
 		return response()->json([
@@ -221,7 +229,7 @@ class StudioUserController extends Controller
         }else
         {
                return response()->json([
-                    'errNo' => ErrorCode::COMMON_REGISTER_ERROR,
+                    'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
                     'result' => 'false',
                 ]);  
@@ -238,7 +246,7 @@ class StudioUserController extends Controller
         if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
         {
                 return response()->json([
-                    'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //10023
+                    'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //100012
                     'errMsg' => '密码错误',
                     'result' => 'false',
                 ]);  
@@ -257,6 +265,11 @@ class StudioUserController extends Controller
                     'result' => 'true',
                 ]);  
         }
+    }
+    //用户退出登陆
+    public function logout(Request $request)
+    {
+        $request->session()->forget('userInfo');
     }
 }
 ?>
