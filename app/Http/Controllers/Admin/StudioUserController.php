@@ -100,27 +100,28 @@ class StudioUserController extends Controller
     }
 	public function uploadHeadPortrait(Request $request)
 	{
-			$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
-	        env('UPYUN_USER'), env('UPYUN_PWD'),
-	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
-	        try {
-	            $fileName = '/' . str_random(10) . '.jpg';
-	            $fp = fopen($_FILES['file']['tmp_name'], 'r');
-	            $ret = $upyun->writeFile($fileName, $fp, true);
-	            fclose($fp);
-	            return response()->json([
-	                'errNo' => 0,
-	                'errMsg' => '',
-	                'result' => [
-	                    'img_url' => env('UPYUN_AVATAR_DOMAIN') . $fileName,
-	                ]
-	            ]);
-	        } catch (Exception $e) {
-	            return response()->json([
-	                'errNo' => $e->getCode(),
-	                'errMsg' => $e->getMessage(),
-	            ]);
-	        }
+        $uid = $request->input('uid');
+		$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
+        env('UPYUN_USER'), env('UPYUN_PWD'),
+        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
+        try {
+            $fileName = '/upload/images/header/'$uid. '-' . str_random(10) . '.jpg';
+            $fp = fopen($_FILES['file']['tmp_name'], 'r');
+            $ret = $upyun->writeFile($fileName, $fp, true);
+            fclose($fp);
+            return response()->json([
+                'errNo' => 0,
+                'errMsg' => '',
+                'result' => [
+                    'img_url' => env('UPYUN_AVATAR_DOMAIN') . $fileName,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'errNo' => $e->getCode(),
+                'errMsg' => $e->getMessage(),
+            ]);
+        }
 	}
     /**
     *短信验证
