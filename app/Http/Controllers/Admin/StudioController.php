@@ -84,7 +84,10 @@ class StudioController extends Controller
 			//填写工作室基本信息之后，在studio_users表增加管理员，0:管理员,1：普通用户
 			$studioInfo = $studio->queryStudioInfo($data);
 			$data['studio_id'] = $studioInfo->studio_id;
-			$data['pwd'] = $request->input('tel');
+			$studioUser = new StudioUser();
+       		$randomCode = $studioUser->getRandomCode(5);
+			$data['pwd'] = $randomCode;  //将这个随机码发送发到用户手机
+			//$this->sendRandomCode($randomCode);
 			$res_user = $studioUser->createUser($data);
 			if($res_studio&&$res_user)
 			{
@@ -101,5 +104,35 @@ class StudioController extends Controller
 	       		'result' => 'false',
     		]); 
 	}
+	   /**
+    * 发送随机密码
+    */
+    private function sendRandomCode($str)
+    {
+        $data['phone'] = $request->input('phone');
+        $studioUser = new StudioUser(); 
+        if (_checkPhone($data['phone'])) {
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], $str, "1");
+            if($result->statusCode!=0) {
+                 return response()->json([
+                    'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
+                    'errMsg' => '获取验证码失败',
+                    'result' => 'false',
+                ]);
+            }else{
+                $smsmessage = $result->TemplateSMS;
+                 return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '验证成功',
+                    'result' =>  'true',
+                ]);           
+            }
+        }
+             return response()->json([
+                    'errNo' => ErrorCode::COMMON_USER_CHECKPHONE_ERROR,
+                    'errMsg' => '手机号格式不正确',
+                    'result' => 'false',
+                ]);  
+    }
 }
 ?>

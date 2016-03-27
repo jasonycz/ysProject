@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class StudioUser extends Model
 {
 	protected $table = 'studio_users';
+    public $codeLetter = array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z");
+    public $codeNumber = array("0","1","2","3","4","5","6","7","8","9");
+    public function getRandomCode($len)
+    {
+        $charsLen = count($this->codeLetter) - 1; 
+        shuffle($this->codeLetter);   
+        $output = ""; 
+        for ($i=0; $i<$len; $i++) 
+        { 
+            $output .= $this->codeLetter[mt_rand(0, $charsLen)]; 
+        }  
+        return $output;  
+    }
 	public function saltCode($len = 6)
     {
         $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -140,5 +153,16 @@ class StudioUser extends Model
                 return false;
             }
         }
+    }
+    //更新登录次数
+    public function updateLoginNum($userId,$nums)
+    {
+            return $userInfo = DB::table($this->table)
+                ->where('user_id', $userId)
+                ->update(
+                array(
+                    'login_num' => $nums,
+                )
+            );
     }
 }

@@ -22,6 +22,12 @@ class StudioUserController extends Controller
         $this->user_id = $sessionUser->user_id;
         $this->studio_id = $sessionUser->studio_id;
     }
+   public function test(Request $Request)
+    {
+        $studioUser = new StudioUser();
+        $res = $studioUser->getRandomCode(5);
+        die();
+    }
 	//使用手机号登陆，参数：手机号，密码
 	public function login(Request $request)
 	{
@@ -40,8 +46,10 @@ class StudioUserController extends Controller
 		$user = $studioUser->logInCheck($phone,$passwd);
 		if($user)
 		{
-            $request->session()->put('userInfo',$user);
-            if($phone == $passwd)
+            $request->session()->put($user->user_id,$user);
+            $login_num = $user->login_num+1;
+            $studioUser->updateLoginNum($user->user_id,$login_num);
+            if($user->login_num == 0)
             {
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_USER_LOGIN_MODIFY,
@@ -54,7 +62,6 @@ class StudioUserController extends Controller
                     'errMsg' => '',
                     'result' => 'true',
                 ]);
-
 		} 
 
 		return response()->json([
@@ -137,6 +144,7 @@ class StudioUserController extends Controller
 	            ]);
 	        }
 	}
+  
     /**
     *短信验证
     */
@@ -266,10 +274,12 @@ class StudioUserController extends Controller
                 ]);  
         }
     }
+
     //用户退出登陆
     public function logout(Request $request)
     {
-        $request->session()->forget('userInfo');
+        $user_id = $request->input("user_id");
+        $request->session()->forget($user_id);
     }
 }
 ?>
