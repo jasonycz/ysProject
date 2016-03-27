@@ -7,7 +7,8 @@ $routesManager = new RoutesManager();
 $routesManager->admin()->www();
 */
 
-
+//test function
+Route::get('user/test','Admin\StudioUserController@test');
 
 //定义路由Get
 Route::get('/', 'Home\IndexController@index'); 
