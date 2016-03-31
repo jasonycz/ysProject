@@ -159,7 +159,7 @@ class StudioUserController extends Controller
         $data['created_time'] = time();
         $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "77073");
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int), "77073");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,

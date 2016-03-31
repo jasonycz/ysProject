@@ -11,7 +11,7 @@ $routesManager->admin()->www();
 Route::get('user/test','Admin\StudioUserController@test');
 
 //定义路由Get
-Route::get('/', 'Home\IndexController@index'); 
+Route::get('/', 'Admin\IndexController@index'); 
 //yangping's code begin
 //获取短信验证码
 Route::post('user/getverify','Admin\StudioUserController@getVerify');
