@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CraftProcess extends Model
 {
+	protected $table = 'craft_process'; 
 	//查询过程
 	public function selectProcess($params)
 	{
@@ -20,11 +21,12 @@ class CraftProcess extends Model
                     ->where('studio_id',$params['studio_id'])
                     ->Where('craft_id',$params['craft_id'])
                     ->select('process_class','describe','process_img','created_time')
-                    ->get();
+                    ->get()->toArray;
             return $res;
 		}
 		return null;
 	}
+	
 }
 
 ?>

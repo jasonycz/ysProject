@@ -15,6 +15,19 @@ use App\Http\UpYun;
 use App\Http\Models\sms\SENDSMS;
 class StudioUserController extends Controller
 {
+    private $user_id;
+    private $studio_id;
+    public function __construct(Request $request){
+        $sessionUser = $request->session()->get('userInfo');
+        $this->user_id = $sessionUser->user_id;
+        $this->studio_id = $sessionUser->studio_id;
+    }
+   public function test(Request $Request)
+    {
+        $studioUser = new StudioUser();
+        $res = $studioUser->getRandomCode(5);
+        die();
+    }
 	//使用手机号登陆，参数：手机号，密码
 	public function login(Request $request)
 	{
@@ -31,15 +44,24 @@ class StudioUserController extends Controller
 
 		$studioUser = new StudioUser();
 		$user = $studioUser->logInCheck($phone,$passwd);
-
 		if($user)
 		{
-            $request->session()->put('userInfo',$user);
-			return response()->json([
-           		'errNo' => ErrorCode::COMMON_OK,
-           		'errMsg' => '',
-           		'result' => 'true',
-        	]);
+            $request->session()->put($user->user_id,$user);
+            $login_num = $user->login_num+1;
+            $studioUser->updateLoginNum($user->user_id,$login_num);
+            if($user->login_num == 0)
+            {
+                return response()->json([
+                    'errNo' => ErrorCode::COMMON_USER_LOGIN_MODIFY,
+                    'errMsg' => '',
+                    'result' => 'true',
+                ]);
+            }
+            return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '',
+                    'result' => 'true',
+                ]);
 		} 
 
 		return response()->json([
@@ -100,28 +122,30 @@ class StudioUserController extends Controller
     }
 	public function uploadHeadPortrait(Request $request)
 	{
-			$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
-	        env('UPYUN_USER'), env('UPYUN_PWD'),
-	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
-	        try {
-	            $fileName = '/' . str_random(10) . '.jpg';
-	            $fp = fopen($_FILES['file']['tmp_name'], 'r');
-	            $ret = $upyun->writeFile($fileName, $fp, true);
-	            fclose($fp);
-	            return response()->json([
-	                'errNo' => 0,
-	                'errMsg' => '',
-	                'result' => [
-	                    'img_url' => env('UPYUN_AVATAR_DOMAIN') . $fileName,
-	                ]
-	            ]);
-	        } catch (Exception $e) {
-	            return response()->json([
-	                'errNo' => $e->getCode(),
-	                'errMsg' => $e->getMessage(),
-	            ]);
-	        }
+        $uid = $request->input('uid');
+		$upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
+        env('UPYUN_USER'), env('UPYUN_PWD'),
+        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
+        try {
+            $fileName = '/upload/images/header/'$uid. '-' . str_random(10) . '.jpg';
+            $fp = fopen($_FILES['file']['tmp_name'], 'r');
+            $ret = $upyun->writeFile($fileName, $fp, true);
+            fclose($fp);
+            return response()->json([
+                'errNo' => 0,
+                'errMsg' => '',
+                'result' => [
+                    'img_url' => env('UPYUN_AVATAR_DOMAIN') . $fileName,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'errNo' => $e->getCode(),
+                'errMsg' => $e->getMessage(),
+            ]);
+        }
 	}
+  
     /**
     *短信验证
     */
@@ -140,7 +164,7 @@ class StudioUserController extends Controller
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
                     'errMsg' => '获取验证码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
             }else{
                 $res = $studioUser->insertVerifyCode($data);
@@ -149,21 +173,21 @@ class StudioUserController extends Controller
                    return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
                     'errMsg' => '验证码插入数据库失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]); 
                 }
                 $smsmessage = $result->TemplateSMS;
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '验证成功',
-                    'result' =>  null,
+                    'result' =>  'true',
                 ]);           
             }
         } else {
              return response()->json([
                     'errNo' => ErrorCode::COMMON_USER_CHECKPHONE_ERROR,
                     'errMsg' => '手机号格式不正确',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
     }
@@ -181,7 +205,7 @@ class StudioUserController extends Controller
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
                     'errMsg' => '验证码不正确或者超时',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
         }
         $time_differ = time() - $code->created_time -600000;
@@ -190,7 +214,7 @@ class StudioUserController extends Controller
                return response()->json([
                     'errNo' => ErrorCode::COMMON_VERTIFY_ERROR,
                     'errMsg' => '验证码不正确或者超时',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
         $userInfo = $studioUser->getUserByPhone($data['phone']);
@@ -200,7 +224,7 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);
         }
         if($studioUser->resetPassword($data))
@@ -214,9 +238,9 @@ class StudioUserController extends Controller
         }else
         {
                return response()->json([
-                    'errNo' => ErrorCode::COMMON_REGISTER_ERROR,
+                    'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
     }
@@ -231,9 +255,9 @@ class StudioUserController extends Controller
         if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
         {
                 return response()->json([
-                    'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //10023
+                    'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //100012
                     'errMsg' => '密码错误',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         }
         if($studioUser->resetPassword($data) == false)
@@ -241,15 +265,22 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
                     'errMsg' => '重置密码失败',
-                    'result' => null,
+                    'result' => 'false',
                 ]);  
         } else {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '重置密码成功',
-                    'result' => true,
+                    'result' => 'true',
                 ]);  
         }
+    }
+
+    //用户退出登陆
+    public function logout(Request $request)
+    {
+        $user_id = $request->input("user_id");
+        $request->session()->forget($user_id);
     }
 }
 ?>
