@@ -15,7 +15,8 @@ class SENDSMS
         $rest = new REST($serverIP, $serverPort, $softVersion);
         $rest->setAccount($accountSid, $accountToken);
         $rest->setAppId($appId);
-
+                var_dump("OK");
+        die();
         return $rest->sendSeeyouSMS($to, $datas, $tempId);
     }
 }

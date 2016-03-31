@@ -19,8 +19,8 @@ class StudioUserController extends Controller
     private $studio_id;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
-        $this->user_id = $sessionUser->user_id;
-        $this->studio_id = $sessionUser->studio_id;
+       // $this->user_id = $sessionUser->user_id;
+        //$this->studio_id = $sessionUser->studio_id;
     }
    public function test(Request $Request)
     {
@@ -127,7 +127,7 @@ class StudioUserController extends Controller
         env('UPYUN_USER'), env('UPYUN_PWD'),
         env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
         try {
-            $fileName = '/upload/images/header/'$uid. '-' . str_random(10) . '.jpg';
+            $fileName = '/upload/images/header/'.$uid. '-' . str_random(10) . '.jpg';
             $fp = fopen($_FILES['file']['tmp_name'], 'r');
             $ret = $upyun->writeFile($fileName, $fp, true);
             fclose($fp);
@@ -159,7 +159,7 @@ class StudioUserController extends Controller
         $data['created_time'] = time();
         $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "1");
+            $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int, '5'), "77073");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,
