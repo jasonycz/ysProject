@@ -11,6 +11,7 @@ use ErrorCode;
 use Illuminate\Http\Request;
 use App\Http\Models\Studio;
 use App\Http\Models\StudioUser;
+use App\Http\Models\sms\SENDSMS;
 //this controller is about studio
 class StudioController extends Controller
 {
@@ -18,8 +19,8 @@ class StudioController extends Controller
 	private $studio_id;
 	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
-        $this->user_id = $sessionUser->user_id;
-        $this->studio_id = $sessionUser->studio_id;
+        $this->user_id = $sessionUser['user_id'];
+        $this->studio_id = $sessionUser['studio_id'];
 	}
 	/**
 	*studio submit identification info
@@ -31,6 +32,7 @@ class StudioController extends Controller
 		$data['tel'] = $request->input('tel');
 		$data['address'] = $request->input('address');
 		$data['describe'] = $request->input('describe');
+		$data['verify_code'] = $request->input('verify_code');
 		if(!$data['name']||!$data['address'])
 		{
 			return response()->json([
@@ -49,7 +51,7 @@ class StudioController extends Controller
 		}
 		$studioUser = new StudioUser();
 		$data['phone'] = $request->input('tel');
-	/*	$code = $studioUser->getVerifyCode($data);
+		$code = $studioUser->getVerifyCode($data);
         if(!$code)
         {
                 return response()->json([
@@ -66,7 +68,7 @@ class StudioController extends Controller
                     'errMsg' => '验证码不正确或者超时',
                     'result' => 'false',
                 ]);  
-        }*/
+        }
 		if($data)
 		{
 			$studio = new Studio();
@@ -87,7 +89,7 @@ class StudioController extends Controller
 			$studioUser = new StudioUser();
        		$randomCode = $studioUser->getRandomCode(5);
 			$data['pwd'] = $randomCode;  //将这个随机码发送发到用户手机
-			//$this->sendRandomCode($randomCode);
+			$this->sendRandomCode($data['tel'],$randomCode);
 			$res_user = $studioUser->createUser($data);
 			if($res_studio&&$res_user)
 			{
@@ -107,12 +109,11 @@ class StudioController extends Controller
 	   /**
     * 发送随机密码
     */
-    private function sendRandomCode($str)
+    private function sendRandomCode($phone,$str)
     {
-        $data['phone'] = $request->input('phone');
         $studioUser = new StudioUser(); 
-        if (_checkPhone($data['phone'])) {
-            $result = SENDSMS::sendSeeyouSMS($data['phone'], $str, "1");
+        if (_checkPhone($phone)) {
+            $result = SENDSMS::sendSeeyouSMS($phone, array($str), "77073");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,

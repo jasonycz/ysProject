@@ -96,6 +96,7 @@ class REST {
        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
        curl_setopt ($ch, CURLOPT_HEADER, 0);
        curl_setopt($ch, CURLOPT_POST, $post);
+       curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18");
        if($post)
           curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -295,6 +296,7 @@ class REST {
                     <datas>".$data."</datas>
                   </TemplateSMS>";
         }
+
         $this->showlog("request body = ".$body);
         // 大写的sig参数 
         $sig =  strtoupper(md5($this->AccountSid . $this->AccountToken . $this->Batch));
@@ -306,6 +308,7 @@ class REST {
         // 生成包头  
         $header = array("Accept:application/$this->BodyType","Content-Type:application/$this->BodyType;charset=utf-8","Authorization:$authen");
         // 发送请求
+      //  curl_setopt(self::$ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18");
         $result = $this->curl_post($url,$body,$header);
         $this->showlog("response body = ".$result);
         if($this->BodyType=="json"){//JSON格式
@@ -319,13 +322,14 @@ class REST {
 //            $datas->statusMsg = '返回包体错误'; 
 //        }
         //重新装填数据
+
         if($datas->statusCode==0){
          if($this->BodyType=="json"){
             $datas->TemplateSMS =$datas->templateSMS;
             unset($datas->templateSMS);   
           }
         }
- 
+
         return $datas; 
     } 
   

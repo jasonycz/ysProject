@@ -19,8 +19,8 @@ class StudioUserController extends Controller
     private $studio_id;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
-       // $this->user_id = $sessionUser->user_id;
-        //$this->studio_id = $sessionUser->studio_id;
+        $this->user_id = $sessionUser['user_id'];
+        $this->studio_id = $sessionUser['studio_id'];
     }
    public function test(Request $Request)
     {
@@ -46,7 +46,10 @@ class StudioUserController extends Controller
 		$user = $studioUser->logInCheck($phone,$passwd);
 		if($user)
 		{
-            $request->session()->put($user->user_id,$user);
+            $userInfo = array();
+            $userInfo['user_id'] = $user->user_id;
+            $userInfo['studio_id'] = $user->studio_id;
+            $request->session()->put('userInfo',$userInfo);
             $login_num = $user->login_num+1;
             $studioUser->updateLoginNum($user->user_id,$login_num);
             if($user->login_num == 0)
@@ -153,7 +156,7 @@ class StudioUserController extends Controller
     public function getVerify(Request $request)
     {
         $data['phone'] = $request->input('phone');
-        $length = 4;
+        $length = 6;
         $int = rand(pow(10,($length-1)), pow(10,$length)-1);
         $data['verify_code'] = $int;
         $data['created_time'] = time();
@@ -279,8 +282,7 @@ class StudioUserController extends Controller
     //用户退出登陆
     public function logout(Request $request)
     {
-        $user_id = $request->input("user_id");
-        $request->session()->forget($user_id);
+        $request->session()->forget('userInfo');
     }
 }
 ?>
