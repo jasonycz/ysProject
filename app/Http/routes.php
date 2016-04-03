@@ -61,4 +61,7 @@ Route::get('wap/show','Wap\CraftController@showDetail');
 //手机端查看所有已发布作品
 Route::get('wap/showall','Wap\CraftController@showAllWorks');
 //返回分享需要的js代码
-Route::get('wap/sharesdk'，'Wap\CraftController@showWxSdk');
+Route::get('wap/sharesdk','Wap\CraftController@showWxSdk');
+
+//设置员工权限
+Route::post('user/setpower','Admin\StudioUserController@setUserPower');

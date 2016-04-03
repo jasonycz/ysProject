@@ -279,6 +279,14 @@ class StudioUserController extends Controller
         }
     }
 
+    //控制用户授权
+    /**
+    *只有管理员拥有最高权限，可以设置用户的各种权限
+    */
+    public function setUserPower(Request $request)
+    {
+        
+    }
     //用户退出登陆
     public function logout(Request $request)
     {

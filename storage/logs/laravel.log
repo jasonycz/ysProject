@@ -5507,3 +5507,6 @@ Stack trace:
 #57 /Users/yangping/Documents/project/ys/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(99): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
 #58 /Users/yangping/Documents/project/ys/ysProject/public/index.php(54): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
 #59 {main}  
+[2016-04-03 14:21:56] local.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'syntax error, unexpected '，' (T_STRING)' in /Users/yangping/Documents/project/ys/ysProject/app/Http/routes.php:64
+Stack trace:
+#0 {main}  
