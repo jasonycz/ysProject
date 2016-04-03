@@ -12,12 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 class StudioArticle extends Model
 {
 	protected $table = 'studio_article';
+	public $timestamps = false;
 	//查询过程
 	public function selectArticle($params)
 	{
 		if($params)
 		{
-			$res = $this->
+			$res = $this
                     ->where('studio_id',$params['studio_id'])
                     ->where('craft_id',$params['craft_id'])
                     ->where('ispublish',1)
@@ -37,7 +38,15 @@ class StudioArticle extends Model
 					->first()->toArray();
 
 	}
-
+	//查询文章内容
+	public function queryContent($aid,$craft_id,$studio_id)
+	{
+		return $this->where('article_id',$aid)
+					->where('studio_id',$studio_id)
+					->where('craft_id',$craft_id)
+					->select('article_name','author','article_time','content')
+					->first()->toArray();
+	}
 	//新增文章
 	public function addArticle($params)
 	{

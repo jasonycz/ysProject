@@ -13,12 +13,13 @@ class CraftImg extends Model
 {
 	protected $table = 'craft_img';
 	//查询玉石图片
-	public function selectYsImg($imgIdStr,$studio_id)
+	public function selectYsImg($imgIdStr,$studio_id,$craft_id)
 	{
 		if($imgIdStr && $studio_id)
 		{
 			$res = $this
                     ->where('studio_id',$studio_id)
+                    ->where('craft_id',$craft_id)
                     ->whereIn('img_id',$imgIdStr)
                     ->select('describe','img_url','created_time')
                     ->get()->toArray();

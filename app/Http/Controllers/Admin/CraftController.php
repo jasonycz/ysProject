@@ -82,7 +82,7 @@ class CraftController extends Controller
 		return response()->json([
        		'errNo' => 0,
        		'errMsg' => '雕件数为0',
-       		'result' => '',
+       		'result' => array(),
 		]); 
 	}
 	/**
@@ -247,8 +247,8 @@ class CraftController extends Controller
 		if(empty($pid) && !isset($pid))
 		{
 			// $this->process->insertData($data);
-		}else{
-
+		}else
+		{
 		}
 	}
 	//雕件软文数据提交及修改
@@ -257,7 +257,7 @@ class CraftController extends Controller
 		$aid = $request->input('aid');
 		$title = $request->input('title');
 		$author = $request->input('author');
-		$createDate = $request->input('createdate');
+		$createDate = $request->input('createDate');
 		$content = $request->input('content');
 		$craft_id = $request->input('craft_id',0);
 		$ispublish = $request->input('publish',0);
@@ -274,7 +274,7 @@ class CraftController extends Controller
 		if(empty($exists))
 		{
 			return response()->json([
-		       		'errNo' => ErrorCode::COMMON_FAIL_ADD_ARTICLE,
+		       		'errNo' => 400013,
 		       		'errMsg' => '玉件id不合法',
 		       		'result' => '',
 	    		]);
@@ -287,7 +287,26 @@ class CraftController extends Controller
 			$params['studio_user_id'] = $this->loginId;
 			$lastid = $this->posts->addArticle($params);
 			if($lastid >= 1){
-				$this->craft->saveStatus(intval($this->studioId),intval($craft_id),6);
+				if($ispublish == 1){
+					switch ($exists['status']) {
+							case 7:
+								$arr['status'] = 9;
+								break;
+							default:
+								$arr['status'] = 6;
+								break;
+						}
+					}else{
+						switch ($exists['status']) {
+							case 7:
+								$arr['status'] = 8;
+								break;
+							default:
+								$arr['status'] = 6;
+								break;
+						}
+					}
+				$this->craft->saveStatus(intval($this->studioId),intval($craft_id),$arr);
 				return response()->json([
 		       		'errNo' => ErrorCode::COMMON_OK,
 		       		'errMsg' => '发布成功',
@@ -305,7 +324,7 @@ class CraftController extends Controller
 			if(empty($hasArt))
 			{
 				return response()->json([
-		       		'errNo' => ErrorCode::COMMON_FAIL_ADD_ARTICLE,
+		       		'errNo' => 400012,
 		       		'errMsg' => '修改文章时,参数不合法',
 		       		'result' => '',
 	    		]);
@@ -320,11 +339,68 @@ class CraftController extends Controller
 	    		]);
 			}else{
 				return response()->json([
-		       		'errNo' => ErrorCode::COMMON_OK,
+		       		'errNo' => 11,
 		       		'errMsg' => '修改失败',
 		       		'result' => '',
 	    		]);
 			}
+		}
+	}
+	//雕件时间轴修改页面
+	public function modifyTimeData(Request $request)
+	{
+		$craft_id = $request->input('craft_id',0);
+		$plist = $this->process->selectOne($this->studioId,$craft_id);
+		if(!empty($plist))
+		{
+			foreach ($plist as $kp => $vp) {
+				$tmparr = explode(',', $vp['process_img']);
+				$plist[$kp]['img_url'] = $this->craftimg->selectYsImg($tmparr,$this->studioId,$craft_id);
+			}
+			return response()->json([
+		     	'errNo' => 0,
+		       	'errMsg' => '数据列表',
+		       	'result' => $plist
+	    	]);
+		}else
+		{	
+			return response()->json([
+		     	'errNo' => 0,
+		       	'errMsg' => '数据列表',
+		       	'result' => array()
+	    	]);
+		}
+	}
+	//雕件软文修改页面
+	public function modifyArticle(Request $request)
+	{
+		$aid = $request->input('aid',0);
+		$craft_id = $request->input('craft_id',0);
+		if(isset($aid) && !empty($aid)){
+			$res = $this->posts->queryContent($aid,$craft_id,$this->studioId);
+			if(empty($res)){
+				return response()->json([
+		       		'errNo' => 800010,
+		       		'errMsg' => '文章id不合法',
+		       		'result' => array(),
+	    		]);
+			}else{
+				return response()->json([
+		       		'errNo' => 0,
+		       		'errMsg' => '文章内容',
+		       		'result' => $res,
+	    		]);
+			}
+		}else{
+			$tmp['article_name'] = '';
+			$tmp['article_time'] = '';
+			$tmp['content'] = '';
+			$tmp['author'] = '';
+			return response()->json([
+		       		'errNo' => 0,
+		       		'errMsg' => '文章内容',
+		       		'result' => $tmp,
+	    	]);
 		}
 	}
 }

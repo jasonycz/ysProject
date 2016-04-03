@@ -82,7 +82,7 @@ class StudioUserController extends Controller
             return response()->json([
                 'errNo' => ErrorCode::COMMON_NOT_LOGIN,
                 'errMsg' => '用户未登录',
-                'result' => null,
+                'result' => array(),
             ]);
         }else{
             return response()->json([

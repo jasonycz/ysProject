@@ -17,7 +17,7 @@ class CraftProcess extends Model
 	{
 		if($params)
 		{
-			$res = DB::table('craft_process')
+			$res = $this
                     ->where('studio_id',$params['studio_id'])
                     ->Where('craft_id',$params['craft_id'])
                     ->select('process_class','describe','process_img','created_time')
@@ -26,7 +26,15 @@ class CraftProcess extends Model
 		}
 		return null;
 	}
-	
+	//查询单个雕件过程图片
+	public function selectOne($studio_id,$craft_id)
+	{
+		return $this->where('studio_id',$studio_id)
+					->where('craft_id',$craft_id)
+					->whereIn('process_class',[1,2,3,4])
+					->select('process_class','process_img','created_time')
+					->get()->toArray();
+	}
 }
 
 ?>
