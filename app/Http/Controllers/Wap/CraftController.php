@@ -21,7 +21,7 @@ class CraftController extends Controller
 		$this->craft = new Craft();
 		$this->cimg = new CraftImg();
 	}
-	//工作室id,雕件id,类型type(时间轴1或软文2)
+	//工作室id,雕件id,类型type(时间轴2或软文1)
 	public function showDetail(Request $request)
 	{
 		$type = $request->input('type',1);

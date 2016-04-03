@@ -19,8 +19,8 @@ class StudioUserController extends Controller
     private $studio_id;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
-       // $this->user_id = $sessionUser->user_id;
-        //$this->studio_id = $sessionUser->studio_id;
+        $this->user_id = $sessionUser->user_id;
+        $this->studio_id = $sessionUser->studio_id;
     }
    public function test(Request $Request)
     {
@@ -46,7 +46,7 @@ class StudioUserController extends Controller
 		$user = $studioUser->logInCheck($phone,$passwd);
 		if($user)
 		{
-            $request->session()->put($user->user_id,$user);
+            $request->session()->put("userInfo",$user);
             $login_num = $user->login_num+1;
             $studioUser->updateLoginNum($user->user_id,$login_num);
             if($user->login_num == 0)
@@ -79,7 +79,7 @@ class StudioUserController extends Controller
             return response()->json([
                 'errNo' => ErrorCode::COMMON_NOT_LOGIN,
                 'errMsg' => '用户未登录',
-                'result' => null,
+                'result' => array(),
             ]);
         }else{
             return response()->json([
@@ -279,8 +279,7 @@ class StudioUserController extends Controller
     //用户退出登陆
     public function logout(Request $request)
     {
-        $user_id = $request->input("user_id");
-        $request->session()->forget($user_id);
+        $request->session()->forget("userInfo");
     }
 }
 ?>

@@ -51,9 +51,14 @@ Route::post('studio/delcraft','Admin\CraftController@delCraft')->middleware(['se
 Route::post('studio/uploaduyimg','Admin\CraftController@uploadImage')->middleware(['sessionLoginVerify']);
 //时间轴删除上传到upyun的图片
 Route::post('studio/deluyimg','Admin\CraftController@delImage')->middleware(['sessionLoginVerify']);
-
+//软文修改页面
+Route::get('studio/modifyArticle','Admin\CraftController@modifyArticle')->middleware(['sessionLoginVerify']);
+//时间轴修改页面
+Route::get('studio/modifyTime','Admin\CraftController@modifyTimeData')->middleware(['sessionLoginVerify']);
 
 //手机端手机预览雕件
 Route::get('wap/show','Wap\CraftController@showDetail');
 //手机端查看所有已发布作品
 Route::get('wap/showall','Wap\CraftController@showAllWorks');
+//返回分享需要的js代码
+Route::get('wap/sharesdk'，'Wap\CraftController@showWxSdk');

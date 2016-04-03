@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class Craft extends Model
 {
 	protected $table = 'craft';
+	public $timestamps = false;
 
 	//查询制作完成未发布雕件
 	public function queryNoFinish($studioId,$uid)
@@ -20,7 +21,7 @@ class Craft extends Model
 					->where('studio_id',$studioId)
 					->where('studio_user_id',$uid)
 					->whereIn('status',[6,7,8])
-					->select('craft_name','status')
+					->select('craft_name','status','craft_id')
 					->orderBy('created_time','desc')
 					->get()->toArray();
 	}
@@ -93,18 +94,17 @@ class Craft extends Model
 	//查询参数是否合法
 	public function isExists($studioid,$craft_id)
 	{
-		returun $this->where('studio_id',$studioid)
+		return $this ->where('studio_id',$studioid)
 					 ->where('craft_id',$craft_id)
-					 ->select('craft_id')
-					 ->first();
+					 ->select('craft_id','status')
+					 ->first()->toArray();
 	}
 	//更改雕件状态
-	public function saveStatus($studioid,$craft_id,$status=6)
+	public function saveStatus($studioid,$craft_id,$data)
 	{
 		return $this->where('studio_id',$studioid)
 					->where('craft_id',$craft_id)
-					->update('status',$status)
-					->toArray();
+					->update($data);
 	}
 }
 ?>
