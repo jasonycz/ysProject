@@ -3,8 +3,7 @@
 *
 * this is yangping's code,the time is 2016.03.01
 */
-namespace App\Http\Controllers\Admin;
-
+namespace App\Http\Controllers\Admin; 
 use App\Http\Controllers\Controller;
 use Log;
 use Session;
@@ -12,9 +11,9 @@ use ErrorCode;
 use Illuminate\Http\Request;
 use App\Http\Models\StudioUser;
 use App\Http\UpYun;
-use App\Http\Models\sms\SENDSMS;
+use App\Http\Models\sms\SENDSMS; 
 class StudioUserController extends Controller
-{
+{ 
     private $user_id;
     private $studio_id;
     public function __construct(Request $request){
@@ -28,7 +27,6 @@ class StudioUserController extends Controller
         $res = $studioUser->getRandomCode(5);
         die();
     }
-	//使用手机号登陆，参数：手机号，密码
 	public function login(Request $request)
 	{
 		$phone = $request->input('phone');
