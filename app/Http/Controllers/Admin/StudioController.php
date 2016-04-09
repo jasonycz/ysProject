@@ -113,7 +113,7 @@ class StudioController extends Controller
     {
         $studioUser = new StudioUser(); 
         if (_checkPhone($phone)) {
-            $result = SENDSMS::sendSeeyouSMS($phone, array($str), "77073");
+            $result = SENDSMS::sendSeeyouSMS($phone, array($str), "77604");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,

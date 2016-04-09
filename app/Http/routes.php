@@ -1,13 +1,4 @@
-<?php
-/*
-use App\Services\Routes as RoutesManager;
-
-
-$routesManager = new RoutesManager();
-$routesManager->admin()->www();
-*/
-
-//test function
+<?php 
 Route::get('user/test','Admin\StudioUserController@test');
 
 //定义路由Get

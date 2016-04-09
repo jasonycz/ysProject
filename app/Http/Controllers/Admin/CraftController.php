@@ -80,7 +80,7 @@ class CraftController extends Controller
 			]); 				
 		}
 		return response()->json([
-       		'errNo' => 0,
+       		'errNo' => 700011,
        		'errMsg' => '雕件数为0',
        		'result' => array(),
 		]); 
