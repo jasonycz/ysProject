@@ -196,9 +196,8 @@ class StudioUserController extends Controller
     public function resetPasswordPhone(Request $req)
     {
         $data['phone'] = $req->input('phone');
-        $data['password'] = $req->input('password');
+        $data['new_password'] = $req->input('password');
         $data['verify_code'] = $req->input('verify_code');
-        $user = new User();
         $studioUser = new StudioUser();
         $code = $studioUser->getVerifyCode($data);
         if(!$code)
@@ -220,17 +219,17 @@ class StudioUserController extends Controller
         }
         $userInfo = $studioUser->getUserByPhone($data['phone']);
         $data['user_id'] = $userInfo->user_id;
-        if (!$result)
+        if (!$userInfo)
         {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,
-                    'errMsg' => '重置密码失败',
+                    'errMsg' => '用户不存在',
                     'result' => 'false',
                 ]);
         }
         if($studioUser->resetPassword($data))
         {
-            $res['user_id'] = $userInfo->id;
+            $res['user_id'] = $userInfo->user_id;
             return response()->json([
                 'errNo' => ErrorCode::COMMON_OK,
                 'errMsg' => '重置密码成功',
