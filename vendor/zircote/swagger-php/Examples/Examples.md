@@ -1,15 +1,16 @@
-Examples
----------
+## petstore.swagger.io
 
-## Petstore
-Generates the official petstore example http://petstore.swagger.wordnik.com/ using the swagger-php.
-Used to ensure that the php implementation is feature complete.
+Using swagger-php to generate the [example for swagger-ui](http://petstore.swagger.io/)
 
-## Minimal
-This example documents which information can be inferred by swagger-php, keeping the swagger overhead to a minimum.
+## swagger-spec
 
-## Router
-Example of how split the documetation between a Controller and a Router using @SWG\Partial.
+Using swagger-php to generate the [examples in the spec](https://github.com/swagger-api/swagger-spec/tree/master/examples/v2.0/json)
 
-## Facet
-Example using the facet pattern.
+## petstore
+The smallest example, contains only 1 operation.
+
+## petstore-simple
+An example with 4 operations on 2 paths.
+
+## petstore-with-external-docs
+Very similar to petstore-simple but with externalDocs

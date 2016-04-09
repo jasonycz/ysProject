@@ -23,6 +23,13 @@ return array(
 
     /*
       |--------------------------------------------------------------------------
+      | Relative path to access swagger ui.
+      |--------------------------------------------------------------------------
+    */
+    'api-docs-route' => 'api/docs',
+
+    /*
+      |--------------------------------------------------------------------------
       | Absolute path to directory containing the swagger annotations are stored.
       |--------------------------------------------------------------------------
     */
@@ -37,7 +44,8 @@ return array(
         storage_path(),
         base_path()."/tests",
         base_path()."/resources/views",
-        base_path()."/config"
+        base_path()."/config",
+        base_path()."/vendor"
     ),
 
     /*
@@ -54,14 +62,14 @@ return array(
       | Edit to set the api's version number
       |--------------------------------------------------------------------------
     */
-    "default-api-version" => "",
+    "default-api-version" => "v1",
 
     /*
       |--------------------------------------------------------------------------
       | Edit to set the swagger version number
       |--------------------------------------------------------------------------
     */
-    "default-swagger-version" => "1.2",
+    "default-swagger-version" => "2.0",
 
     /*
       |--------------------------------------------------------------------------

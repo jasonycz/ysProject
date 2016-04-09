@@ -1,79 +1,30 @@
 #!/usr/bin/env php
 <?php
-
-/**
- * @license  http://www.apache.org/licenses/LICENSE-2.0
- *           Copyright [2014] [Robert Allen]
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * This is more intended as an example than anything else however it does
- * provide functionality to generate the json files as static entities as part
- * of a deployment process etc.
- */
-function includeIfExists($file)
-{
-    if (file_exists($file)) {
-        return include $file;
-    }
-}
-if (!($loader = includeIfExists(dirname(__DIR__).'/vendor/autoload.php')) // Local vendor-dir (swagger-php/vendor/)
-    && !($loader = includeIfExists(__DIR__.'/../../../autoload.php')) // Project vendor-dir (swagger installed as dependancy)
-) {
-    die(<<<'EOT'
-You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install
-
-EOT
-    );
-}
+error_reporting(E_ALL);
+// Possible options and their default values.
+$options = array(
+    'output' => 'swagger.json',
+    'stdout' => false,
+    'exclude' => null,
+    'bootstrap' => false,
+    'help' => false,
+    'version' => false,
+);
+$aliases = array(
+    'o' => 'output',
+    'e' => 'exclude',
+    'b' => 'bootstrap',
+    'v' => 'version',
+    'h' => 'help',
+);
+$needsArgument = array(
+    'output',
+    'exclude',
+    'bootstrap',
+);
+$paths = array();
+$error = false;
 try {
-    // Possible options and their default values.
-    $options = array(
-        'output' => getcwd(),
-        'exclude' => null,
-        'bootstrap' => false,
-        'url' => null,
-        'default-base-path' => null,
-        'default-api-version' => null,
-        'default-swagger-version' => '1.2',
-        'api-doc-template' => null,
-        'version' => false,
-        'suffix' => '.{format}',
-        'help' => false,
-        'debug' => false,
-    );
-    $aliases = array(
-        'o' => 'output',
-        'u' => 'url',
-        'e' => 'exclude',
-        'b' => 'bootstrap',
-        'v' => 'version',
-        'h' => 'help',
-    );
-    $needsArgument = array(
-        'output',
-        'exclude',
-        'bootstrap',
-        'url',
-        'suffix',
-        'default-base-path',
-        'default-api-version',
-        'default-swagger-version',
-        'api-doc-template',
-    );
-    $paths = array();
     // Parse cli arguments
     for ($i = 1; $i < $argc; $i++) {
         $arg = $argv[$i];
@@ -83,18 +34,18 @@ try {
             if (array_key_exists(substr($arg, 1), $aliases)) {
                 $option = $aliases[$arg[1]];
             } else {
-                throw new RuntimeException('Unknown option: "'.$arg.'"');
+                throw new Exception('Unknown option: "' . $arg . '"');
             }
         } else {
             $paths[] = $arg;
             continue;
         }
         if (array_key_exists($option, $options) === false) {
-            throw new RuntimeException('Unknown option: "'.$arg.'"');
+            throw new Exception('Unknown option: "' . $arg . '"');
         }
         if (in_array($option, $needsArgument)) {
             if (empty($argv[$i + 1]) || $argv[$i + 1][0] === '-') {
-                throw new RuntimeException('Missing argument for "'.$arg.'"');
+                throw new Exception('Missing argument for "' . $arg . '"');
             }
             $options[$option] = $argv[$i + 1];
             $i++;
@@ -102,146 +53,124 @@ try {
             $options[$option] = true;
         }
     }
-    $version = trim(file_get_contents(__DIR__.'/../VERSION'));
-    if ($options['version']) {
-        echo $version, PHP_EOL;
-        exit;
+} catch (Exception $e) {
+    $error = $e->getMessage();
+}
+$version = trim(file_get_contents(__DIR__ . '/../VERSION'));
+if ($options['version']) {
+    echo $version, PHP_EOL;
+    exit;
+}
+error_log('');
+error_log('Swagger-PHP ' . $version);
+error_log('------------'.  str_repeat('-', strlen($version)));
+if (!$error && $options['bootstrap']) {
+    if (is_readable($options['bootstrap']) === false) {
+        $error = 'Invalid `--bootstrap` value: "'.$options['bootstrap'].'"';
+    } else {
+        require_once($options['bootstrap']);
     }
-    echo 'Swagger-PHP ', $version, PHP_EOL;
-    echo '-----------------', PHP_EOL;
+}
 
-    if ($argc === 1 || $options['help']) {
-        echo <<<EOF
-Generate Swagger JSON documents for a PHP project.
+if ($error) {
+    error_log('[ERROR] '.$error);
+    $options['help'] = true; // Show help
+}
+if ($options['help']) {
+    $help = <<<EOF
 
-Usage: swagger /path/to/project [--output /path/to/docs] ...
+usage: swagger [/path/to/project] [--output ./swagger.json] ...
 
-  -o, --output        Directory to store the generated json documents.
-  -u, --url           Url to the output folder. (api-docs basePath)
-  -e, --exclude       Exclude path(s).
-                         ex: --exclude vendor:library/Zend:library/Foo
-  -b, --bootstrap     Bootstrap php file(s) for defining constants, etc.
-                         ex: --bootstrap autoload.php:config/contants.php
-
-  --default-base-path        Provide a default basePath for the resources
-  --default-api-version      Provide a default apiVersion for the resources
-  --default-swagger-version  Provide a default swaggerVersion for the resources
-  --api-doc-template         Provide a json template for the resource listing
-
-  -v, --version       Swagger-PHP version
-  -h, --help          This help message
+  --output (-o)     Path to store the generated documentation.
+  --stdout          Write to the standard output.
+  --exclude (-e)    Exclude path(s).
+                    ex: --exclude vendor,library/Zend
+  --bootstrap (-b)  Bootstrap a php file for defining constants, etc.
+                    ex: --bootstrap config/constants.php
+  --version (-v)    Display Swagger-PHP version.
+  --help (-h)       Display this help message.
 
 
 EOF;
-        exit;
-    }
-    if ($options['exclude']) {
-        $excludePaths = explode(':', $options['exclude']);
-        foreach ($excludePaths as $index => $excludePath) {
-            if (DIRECTORY_SEPARATOR != substr($excludePath, 0, 1)) {
-                $excludePaths[$index] = getcwd().DIRECTORY_SEPARATOR.$excludePath;
-            }
-        }
-    } else {
-        $excludePaths = array();
-    }
-    if ($options['bootstrap']) {
-        /* @var  \Composer\Autoload\ClassLoader $loader */
-        foreach (explode(',', $options['bootstrap']) as $incPath) {
-            @list($namespace, $inclusionPath) = explode(':', $incPath);
-            $loader->add($namespace, array($inclusionPath ? : '.'));
-            if (!$inclusionPath && is_file($incPath)) {
-                require_once($incPath);
-            }
-        }
-    }
-    if (count($paths) === 0) {
-        throw new RuntimeException('A path must be provided');
-    }
-    $projectPaths = array();
-    foreach ($paths as $i => $path) {
-        $projectPaths[$i] = realpath($path);
-        if ($projectPaths[$i] === false) {
-            throw new RuntimeException('Path "'.$path.'" not found');
-        }
-    }
-    $outputPath = rtrim($options['output'], '\\//').DIRECTORY_SEPARATOR; // Force a trailing slash
-
-    \Swagger\Logger::getInstance()->log = function ($entry, $type) {
-        $type = $type === E_USER_NOTICE ? 'INFO' : 'WARN';
-        if ($entry instanceof Exception) {
-            $entry = $entry->getMessage();
-        }
-        echo '[', $type, '] ', $entry, PHP_EOL;
-    };
-    $swagger = new \Swagger\Swagger($projectPaths, $excludePaths);
-
-    $resourceList = $swagger->getResourceList(array(
-        'output' => 'array',
-        'suffix' => $options['suffix'],
-        'basePath' => $options['url'],
-        'apiVersion' => $options['default-api-version'],
-        'swaggerVersion' => $options['default-swagger-version'],
-        'template' => $options['api-doc-template']
-    ));
-    // Use the imported values from the `api-doc-template` or else use the given defaults.
-    $resourceOptions = array(
-        'output' => 'json',
-        'defaultSwaggerVersion' => $resourceList['swaggerVersion'],
-        'defaultBasePath' => $options['default-base-path']
-    );
-    if (isset($resourceList['apiVersion'])) {
-        $resourceOptions['defaultApiVersion'] = $resourceList['apiVersion'];
-    }
-
-    $resourceName = false;
-    $output = array();
-    foreach ($swagger->getResourceNames() as $resourceName) {
-        $json = $swagger->getResource($resourceName, $resourceOptions);
-        $resourceName = str_replace(DIRECTORY_SEPARATOR, '-', ltrim($resourceName, DIRECTORY_SEPARATOR));
-        $output[$resourceName] = $json;
-    }
-    if ($output) {
-        if (file_exists($outputPath) && !is_dir($outputPath)) {
-            throw new RuntimeException(
-            sprintf('[%s] is not a directory', $outputPath)
-            );
-        } else {
-            if (!file_exists($outputPath) && !mkdir($outputPath, 0755, true)) {
-                throw new RuntimeException(
-                sprintf('[%s] is not writeable', $outputPath)
-                );
-            }
-        }
-
-        $filename = $outputPath.'api-docs.json';
-        if (file_put_contents($filename, Swagger\Swagger::jsonEncode($resourceList, true))) {
-            echo 'Created ', $filename, PHP_EOL;
-        }
-        if ($options['url'] == false) {
-            $filename = $outputPath.'index.php';
-            if (file_exists($filename)) {
-                echo 'Skipped ', $filename, PHP_EOL;
-            } else {
-                file_put_contents($filename, "<?php\nheader('Content-Type: application/json');\nreadfile(__DIR__.'/api-docs.json');");
-                echo 'Created ', $filename, PHP_EOL;
-            }
-        }
-        foreach ($output as $name => $json) {
-            $name = str_replace(DIRECTORY_SEPARATOR, '-', ltrim($name, DIRECTORY_SEPARATOR));
-            $filename = $outputPath.$name.'.json';
-            echo 'Created ', $filename, PHP_EOL;
-            file_put_contents($filename, $json);
-        }
-        echo PHP_EOL;
-    } else {
-        throw new RuntimeException('no valid resources found');
-    }
-} catch (Exception $e) {
-    echo '[ERROR] ', $e->getMessage();
-    if ($options['debug']) {
-        echo ' in ', $e->getFile(), ' on line ', $e->getLine();
-    }
-    echo PHP_EOL, PHP_EOL;
-    exit(1);
+    error_log($help);
+    exit;
 }
+if (count($paths) === 0) {
+    $paths[] = getcwd();
+    echo "Scanning files in '".$paths[0]."' ...\n";
+}
+if (class_exists('Swagger\Logger') === false) {
+    if (file_exists(__DIR__.'/../vendor/autoload.php')) {  // cloned / dev environment?
+        require_once(__DIR__.'/../vendor/autoload.php');
+    } else {
+        require_once(realpath(__DIR__.'/../../../').'/autoload.php');
+    }
+}
+$errorTypes = [
+    E_ERROR => 'ERROR',
+    E_WARNING => 'WARNING',
+    E_PARSE => 'PARSE',
+    E_NOTICE => 'NOTICE',
+    E_CORE_ERROR => 'CORE_ERROR',
+    E_CORE_WARNING => 'CORE_WARNING',
+    E_COMPILE_ERROR => 'COMPILE_ERROR',
+    E_COMPILE_WARNING => 'COMPILE_WARNING',
+    E_USER_ERROR => 'ERROR',
+    E_USER_WARNING => 'WARNING',
+    E_USER_NOTICE => 'NOTICE',
+    E_STRICT => 'STRICT',
+    E_RECOVERABLE_ERROR => 'RECOVERABLE_ERROR',
+    E_DEPRECATED => 'DEPRECATED',
+    E_USER_DEPRECATED => 'DEPRECATED'
+];
+set_error_handler(function ($errno, $errstr, $file, $line) use ($errorTypes) {
+    if (!(error_reporting() & $errno)) {
+        return; // This error code is not included in error_reporting
+    }
+    $type = @$errorTypes[$errno] ?: 'ERROR';
+    error_log('[' . $type . '] '.$errstr .' in '.$file.' on line '.$line);
+    if ($type === 'ERROR') {
+        exit($errno);
+    }
+});
+set_exception_handler(function ($exception) {
+    error_log('[EXCEPTION] '.$exception->getMessage() .' in '.$exception->getFile().' on line '.$exception->getLine());
+    exit($exception->getCode() ?: 1);
+});
+\Swagger\Logger::getInstance()->log = function ($entry, $type) {
+    $type = $type === E_USER_NOTICE ? 'INFO' : 'WARN';
+    if ($entry instanceof Exception) {
+        $entry = $entry->getMessage();
+    }
+    error_log('[' . $type . '] ' . $entry . PHP_EOL);
+};
+
+
+$exclude = $options['exclude'] ? explode(',', $options['exclude']) : null;
+
+$swagger = Swagger\scan($paths, ['exclude' => $exclude]);
+$methods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
+$counter = 0;
+
+// Output report
+foreach ($swagger->paths as $path) {
+    foreach ($path as $method => $operation) {
+        if ($operation !== null && in_array($method, $methods)) {
+            error_log(str_pad($method, 7, ' ', STR_PAD_LEFT) . ' ' . $path->path);
+            $counter++;
+        }
+    }
+}
+error_log('----------------------'.  str_repeat('-', strlen($counter)));
+error_log($counter.' operations documented');
+error_log('----------------------'.  str_repeat('-', strlen($counter)));
+if ($options['stdout']) {
+    echo $swagger;
+} else {
+    if (is_dir($options['output'])) {
+        $options['output'] .= '/swagger.json';
+    }
+    $swagger->saveAs($options['output']);
+    error_log('Written to '.realpath($options['output']));
+}
+error_log('');
