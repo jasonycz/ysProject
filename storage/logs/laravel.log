@@ -8416,3 +8416,32 @@ Stack trace:
 #8 /Users/bellchen/Code/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(152): Illuminate\Foundation\Application->make('App\\Http\\Middle...')
 #9 /Users/bellchen/Code/ysProject/public/index.php(58): Illuminate\Foundation\Http\Kernel->terminate(Object(Illuminate\Http\Request), Object(Illuminate\Http\Response))
 #10 {main}  
+[2016-04-10 01:52:53] local.ERROR: exception 'ErrorException' with message 'include(/usr/share/nginx/ysProject/vendor/jlapp/swaggervel/src/Jlapp/Swaggervel/SwaggervelServiceProvider.php): failed to open stream: No such file or directory' in /usr/share/nginx/ysProject/vendor/composer/ClassLoader.php:412
+Stack trace:
+#0 /usr/share/nginx/ysProject/vendor/composer/ClassLoader.php(412): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'include(/usr/sh...', '/usr/share/ngin...', 412, Array)
+#1 /usr/share/nginx/ysProject/vendor/composer/ClassLoader.php(412): Composer\Autoload\includeFile()
+#2 /usr/share/nginx/ysProject/vendor/composer/ClassLoader.php(301): Composer\Autoload\includeFile('/usr/share/ngin...')
+#3 [internal function]: Composer\Autoload\ClassLoader->loadClass('Jlapp\\Swaggerve...')
+#4 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(146): spl_autoload_call('Jlapp\\Swaggerve...')
+#5 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(74): Illuminate\Foundation\ProviderRepository->createProvider('Jlapp\\Swaggerve...')
+#6 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(507): Illuminate\Foundation\ProviderRepository->load(Array)
+#7 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#8 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#9 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(232): Illuminate\Foundation\Application->bootstrapWith(Array)
+#10 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(127): Illuminate\Foundation\Http\Kernel->bootstrap()
+#11 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(99): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#12 /usr/share/nginx/ysProject/public/index.php(54): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#13 {main}  
+[2016-04-10 01:52:53] local.ERROR: exception 'ReflectionException' with message 'Class encrypter does not exist' in /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php:738
+Stack trace:
+#0 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(738): ReflectionClass->__construct('encrypter')
+#1 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(633): Illuminate\Container\Container->build('encrypter', Array)
+#2 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(674): Illuminate\Container\Container->make('encrypter', Array)
+#3 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(853): Illuminate\Foundation\Application->make('Illuminate\\Cont...')
+#4 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(808): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#5 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(779): Illuminate\Container\Container->getDependencies(Array, Array)
+#6 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Container/Container.php(633): Illuminate\Container\Container->build('App\\Http\\Middle...', Array)
+#7 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(674): Illuminate\Container\Container->make('App\\Http\\Middle...', Array)
+#8 /usr/share/nginx/ysProject/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(152): Illuminate\Foundation\Application->make('App\\Http\\Middle...')
+#9 /usr/share/nginx/ysProject/public/index.php(58): Illuminate\Foundation\Http\Kernel->terminate(Object(Illuminate\Http\Request), Object(Illuminate\Http\Response))
+#10 {main}  
