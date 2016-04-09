@@ -12,6 +12,7 @@ use App\Http\Models\sms\SENDSMS;
 use Swagger\Annotations as SWG;
 /** 
  * @SWG\Info( 
+ *   version=2.1,
  *   title="玉师傅API文档", 
  *   description="版本 0.1", 
  * ) 

@@ -3,8 +3,8 @@
     "type": "library",
     "license": "Apache2",
     "bin": ["bin/swagger"],
-    "description": "Swagger-PHP library implementing the swagger.wordnik.com specification to describe web services, operations/actions and models enabling a uniform means of producing, consuming, and visualizing RESTful web services.",
-    "keywords": ["json", "api", "service discovery"],
+    "description": "Swagger-PHP - Generate interactive documentation for your RESTful API using phpdoc annotations",
+    "keywords": ["json", "rest", "api", "service discovery"],
     "homepage": "https://github.com/zircote/swagger-php/",
     "authors": [
         {
@@ -22,16 +22,23 @@
         "bin-dir": "bin"
     },
     "require": {
-        "php": ">=5.3.3",
-        "doctrine/annotations": "*"
-    },
-    "require-dev": {
-        "symfony/finder": "*",
-        "symfony/process": "*"
+        "php": ">=5.4.0",
+        "doctrine/annotations": "*",
+        "symfony/finder": "*"
     },
     "autoload": {
-        "psr-0": {
-            "Swagger": "library"
+        "psr-4": {
+            "Swagger\\": "src"
+        },
+        "files": ["src/functions.php"]
+    },
+    "require-dev": {
+        "zendframework/zend-form": "*",
+        "squizlabs/php_codesniffer": "2.*"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SwaggerTests\\": "tests/"
         }
     }
 }
