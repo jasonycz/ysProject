@@ -56,13 +56,13 @@ class StudioUserController extends Controller
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_USER_LOGIN_MODIFY,
                     'errMsg' => '',
-                    'result' => 'true',
+                    'result' => $userInfo,
                 ]);
             }
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '',
-                    'result' => 'true',
+                    'result' => $userInfo,
                 ]);
 		} 
 
