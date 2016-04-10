@@ -76,8 +76,6 @@ class StudioUserController extends Controller
     public function checkUserLogined(Request $request)
     {
         $sessionUser = $request->session()->get('userInfo');
-        var_dump($sessionUser);
-        die();
         if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']) || empty($sessionUser['user_id']))
         {
             return response()->json([
