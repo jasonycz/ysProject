@@ -61,7 +61,7 @@ class StudioUserController extends Controller
             return response()->json([
                     'errNo' => ErrorCode::COMMON_OK,
                     'errMsg' => '',
-                    'result' => 'true',
+                    'result' => $userInfo,
                 ]);
 		} 
 
