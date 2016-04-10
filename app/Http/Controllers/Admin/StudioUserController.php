@@ -47,6 +47,7 @@ class StudioUserController extends Controller
             $userInfo = array();
             $userInfo['user_id'] = $user->user_id;
             $userInfo['studio_id'] = $user->studio_id;
+            $userInfo['user_name'] = $user->user_name;
             $request->session()->put('userInfo',$userInfo);
             $login_num = $user->login_num+1;
             $studioUser->updateLoginNum($user->user_id,$login_num);
@@ -75,6 +76,8 @@ class StudioUserController extends Controller
     public function checkUserLogined(Request $request)
     {
         $sessionUser = $request->session()->get('userInfo');
+        var_dump($sessionUser);
+        die();
         if(empty($sessionUser) || !array_key_exists('user_name', $sessionUser) || empty($sessionUser['user_name']) || empty($sessionUser['user_id']))
         {
             return response()->json([
