@@ -178,7 +178,7 @@ EOF;
 	    }
 	    return $str;
   	}
-  	private function getJsApiTicket() {
+  	private function getJsApiTicket() { //先获得token，通过token获得ticket
   		$ticketFile = './resources/weixin/ticketfile';
 	    $data = json_decode(file_get_contents($ticketFile));
 	    if ($data->expire_time < time()) {
