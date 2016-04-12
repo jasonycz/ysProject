@@ -27,8 +27,8 @@ class CraftController extends Controller
 		$sessionUser = $request->session()->get('userInfo');
         $this->loginId = $sessionUser['user_id'];
 		$this->studioId = $sessionUser['studio_id'];
-		$this->loginId = 1;
-		$this->studioId = 1;
+		// $this->loginId = 1;
+		// $this->studioId = 1;
 		$this->craft = new Craft();
 		$this->craftimg = new Craftimg();
 		$this->posts = new StudioArticle();
@@ -168,7 +168,7 @@ class CraftController extends Controller
        		'result' => 'false',
 		]);
 	}
-	//发布雕件时间轴页面上传图片
+	//发布 雕件时间轴页面上传图片
 	public function uploadImage(Request $request){
 	    try {
 	        $fileName = '/upload/images/craft/'.$this->studioId . '-' . str_random(10) . '.jpg';
@@ -229,26 +229,109 @@ class CraftController extends Controller
 	public function addTimeData(Request $request)
 	{
 		//类型与图片最好是数组格式'1'=>array('','','')
-		$pClass = $request->input('class');
-		$classImgUrl = $request->input('classImgUrl');
+		$pClass = $request->input('timeLine');
 		$craft_id = $request->input('craft_id');
 		$pid = $request->input('pid');
 		$exists = $this->craft->isExists($this->studioId,$craft_id);
 		if(empty($exists))
 		{
 			return response()->json([
-		       		'errNo' => -234234,
+		       		'errNo' => -900010,
 		       		'errMsg' => '玉件id不合法',
-		       		'result' => '',
+		       		'result' => array(),
 	    		]);
 		}
 		//需要根据前台传的数据，来增加数据
 		//需要新增图片及增加时间轴及更改雕件的状态
 		if(empty($pid) && !isset($pid))
 		{
-			// $this->process->insertData($data);
+			$len = 0;
+			foreach ($pClass as $kc => $vc) {
+				$imgid = '';
+				$timeImg = explode(',', $vc['img']);
+				foreach ($timeImg as $ki => $vi) {
+					$arr['img_url'] = $vi;
+					$arr['created_time'] = date('Y-m-d H:i:s',time());
+					$arr['studio_id'] = $this->studioId;
+					$arr['studio_user_id'] = $this->loginId;
+					$arr['craft_id'] = $craft_id;
+					$imgid .= $this->craftimg->addImages($arr).',';
+				}
+				$parr['process_class'] = $kc+1;
+				$parr['describe'] = $kc+1;
+				$parr['process_img'] = rtrim(',',$imgid);
+				$parr['studio_user_id'] = $this->loginId;
+				$parr['studio_id'] = $this->studioId;
+				$parr['craft_id'] = $craft_id;
+				$lastid = $this->process->addProcess($parr);	
+				if($lastid >= 1){
+					$len++;
+				}
+			}
+			if($len == count($pClass)){
+				switch ($exists['status']) {
+					case 6:
+						$arr['status'] = 9;
+						break;
+					case 8:
+						$arr['status'] = 9;
+						break;
+					default:
+						$arr['status'] = 6;
+						break;
+				}
+				$this->craft->saveStatus($this->studioId,$craft_id,$arr);
+				return response()->json([
+	       			'errNo' => 0,
+	       			'errMsg' => '成功',
+	       			'result' => array(),
+				]);
+			}else{
+				return response()->json([
+	       			'errNo' => -900020,
+	       			'errMsg' => '失败',
+	       			'result' => array(),
+				]);
+			}
 		}else
 		{
+			$this->craftimg->deleteData($this->studioId,$craft_id);
+			$this->process->deleteData($this->studioId,$craft_id);
+			$len = 0;
+			foreach ($pClass as $kc => $vc) {
+				$imgid = '';
+				foreach ($vc['img'] as $ki => $vi) {
+					$arr['img_url'] = $vi;
+					$arr['created_time'] = date('Y-m-d H:i:s',time());
+					$arr['studio_id'] = $this->studioId;
+					$arr['studio_user_id'] = $this->loginId;
+					$arr['craft_id'] = $craft_id;
+					$imgid .= $this->craftimg->addImages($arr).',';
+				}
+				$parr['process_class'] = $kc+1;
+				$parr['describe'] = $kc+1;
+				$parr['process_img'] = rtrim(',',$imgid);
+				$parr['studio_user_id'] = $this->loginId;
+				$parr['studio_id'] = $this->studioId;
+				$parr['craft_id'] = $craft_id;
+				$lastid = $this->process->addProcess($parr);	
+				if($lastid >= 1){
+					$len++;
+				}
+			}
+			if($len == count($pClass)){
+				return response()->json([
+	       			'errNo' => 0,
+	       			'errMsg' => '成功',
+	       			'result' => array(),
+				]);
+			}else{
+				return response()->json([
+	       			'errNo' => -900020,
+	       			'errMsg' => '失败',
+	       			'result' => array(),
+				]);
+			}
 		}
 	}
 	//雕件软文数据提交及修改
@@ -353,14 +436,21 @@ class CraftController extends Controller
 		$plist = $this->process->selectOne($this->studioId,$craft_id);
 		if(!empty($plist))
 		{
+			$tmp = array('1'=>'设计','2'=>'大型','3'=>'细工','4'=>'抛光');
 			foreach ($plist as $kp => $vp) {
 				$tmparr = explode(',', $vp['process_img']);
-				$plist[$kp]['img_url'] = $this->craftimg->selectYsImg($tmparr,$this->studioId,$craft_id);
+				$imgarr = $this->craftimg->selectYsImg($tmparr,$this->studioId,$craft_id);
+				foreach ($imgarr as $ka=> $va) {
+					$imgtmp[] = $va['img_url'];
+				}
+				$results[$kp] = array('name'=>$tmp[$vp['process_class']],'describe'=>$vp['describe'],'img'=>$imgtmp);
 			}
+			$lastData['id'] = $craft_id;
+			$lastData['timeLine'] = $results;
 			return response()->json([
 		     	'errNo' => 0,
 		       	'errMsg' => '数据列表',
-		       	'result' => $plist
+		       	'result' => $lastData
 	    	]);
 		}else
 		{	

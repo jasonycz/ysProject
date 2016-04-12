@@ -21,7 +21,7 @@ class CraftImg extends Model
                     ->where('studio_id',$studio_id)
                     ->where('craft_id',$craft_id)
                     ->whereIn('img_id',$imgIdStr)
-                    ->select('describe','img_url','created_time')
+                    ->select('img_url')
                     ->get()->toArray();
             return $res;
 		}
@@ -44,6 +44,16 @@ class CraftImg extends Model
 					->where('craft_id',$craftid)
 					->select('describe','img_url')
 					->get()->toArray();
+	}
+	//新增图片
+	public function addImages($data){
+		return $this->insert($data);
+	}
+	//删除
+	public function deleteData($studioid,$craft_id){
+		return $this->where('studio_id',$studioid)
+					->where('craft_id',$craft_id)
+					->delete();
 	}
 }
 

@@ -32,8 +32,18 @@ class CraftProcess extends Model
 		return $this->where('studio_id',$studio_id)
 					->where('craft_id',$craft_id)
 					->whereIn('process_class',[1,2,3,4])
-					->select('process_class','process_img','created_time')
+					->select('process_class','process_img','describe')
 					->get()->toArray();
+	}
+	//插入数据
+	public function addProcess($data){
+		return $this->insert($data);
+	}
+	//删除
+	public function deleteData($studioid,$craft_id){
+		return $this->where('studio_id',$studioid)
+					->where('craft_id',$craft_id)
+					->delete();
 	}
 }
 
