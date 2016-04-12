@@ -16,10 +16,12 @@ class StudioUserController extends Controller
 { 
     private $user_id;
     private $studio_id;
+    private $studioUser;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
         $this->user_id = $sessionUser['user_id'];
         $this->studio_id = $sessionUser['studio_id'];
+        $this->studioUser = new StudioUser();
     }
    public function test(Request $Request)
     {
@@ -39,9 +41,7 @@ class StudioUserController extends Controller
 	       		'result' => 'false',
     		]); 
 		}
-
-		$studioUser = new StudioUser();
-		$user = $studioUser->logInCheck($phone,$passwd);
+		$user = $this->studioUser->logInCheck($phone,$passwd);
 		if($user)
 		{
             $userInfo = array();
@@ -50,7 +50,7 @@ class StudioUserController extends Controller
             $userInfo['user_name'] = $user->user_name;
             $request->session()->put('userInfo',$userInfo);
             $login_num = $user->login_num+1;
-            $studioUser->updateLoginNum($user->user_id,$login_num);
+            $this->studioUser->updateLoginNum($user->user_id,$login_num);
             if($user->login_num == 0)
             {
                 return response()->json([
@@ -159,7 +159,6 @@ class StudioUserController extends Controller
         $int = rand(pow(10,($length-1)), pow(10,$length)-1);
         $data['verify_code'] = $int;
         $data['created_time'] = time();
-        $studioUser = new StudioUser(); 
         if (_checkPhone($data['phone'])) {
             $result = SENDSMS::sendSeeyouSMS($data['phone'], array($int), "77073");
             if($result->statusCode!=0) {
@@ -169,7 +168,7 @@ class StudioUserController extends Controller
                     'result' => 'false',
                 ]);
             }else{
-                $res = $studioUser->insertVerifyCode($data);
+                $res = $this->studioUser->insertVerifyCode($data);
                 if(!$res)
                 {
                    return response()->json([
@@ -199,8 +198,7 @@ class StudioUserController extends Controller
         $data['phone'] = $req->input('phone');
         $data['new_password'] = $req->input('password');
         $data['verify_code'] = $req->input('verify_code');
-        $studioUser = new StudioUser();
-        $code = $studioUser->getVerifyCode($data);
+        $code = $this->studioUser->getVerifyCode($data);
         if(!$code)
         {
                 return response()->json([
@@ -218,7 +216,7 @@ class StudioUserController extends Controller
                     'result' => 'false',
                 ]);  
         }
-        $userInfo = $studioUser->getUserByPhone($data['phone']);
+        $userInfo = $this->studioUser->getUserByPhone($data['phone']);
         $data['user_id'] = $userInfo->user_id;
         if (!$userInfo)
         {
@@ -228,7 +226,7 @@ class StudioUserController extends Controller
                     'result' => 'false',
                 ]);
         }
-        if($studioUser->resetPassword($data))
+        if($this->studioUser->resetPassword($data))
         {
             $res['user_id'] = $userInfo->user_id;
             return response()->json([
@@ -251,9 +249,8 @@ class StudioUserController extends Controller
         $data['user_id'] = $request->input('user_id');
         $data['old_password'] = $request->input('old_password');
         $data['new_password'] = $request->input('new_password');
-        $studioUser = new StudioUser();
-        $userInfo = $studioUser->getUserById($data['user_id']);
-        if($studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
+        $userInfo = $this->studioUser->getUserById($data['user_id']);
+        if($this->studioUser->checkPassword($data['user_id'],$data['old_password']) == false)
         {
                 return response()->json([
                     'errNo' => ErrorCode::COMMON_PASSWD_ERROR, //100012
@@ -261,7 +258,7 @@ class StudioUserController extends Controller
                     'result' => 'false',
                 ]);  
         }
-        if($studioUser->resetPassword($data) == false)
+        if($this->studioUser->resetPassword($data) == false)
         {
             return response()->json([
                     'errNo' => ErrorCode::COMMON_RESET_ERROR,

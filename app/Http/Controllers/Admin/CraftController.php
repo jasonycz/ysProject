@@ -138,13 +138,13 @@ class CraftController extends Controller
 		}
 		if(empty($list)){
 			return response()->json([
-       			'errNo' => 0,
+       			'errNo' => ErrorCode::COMMON_CRAFT_GET,
        			'errMsg' => '数据为空',
        			'result' => 'false',
 			]);
 		}
 		return response()->json([
-       			'errNo' => 200,
+       			'errNo' => ErrorCode::COMMON_OK,
        			'errMsg' => '数据为空',
        			'result' => $list,
 		]);
@@ -214,7 +214,7 @@ class CraftController extends Controller
 		if(empty($cid))
 		{
 			return response()->json([
-       			'errNo' => 0,
+       			'errNo' => 200,
        			'errMsg' => '数据为空',
        			'result' => 'false',
 			]);
