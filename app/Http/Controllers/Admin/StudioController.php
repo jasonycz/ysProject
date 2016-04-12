@@ -17,10 +17,14 @@ class StudioController extends Controller
 {
 	private $user_id;
 	private $studio_id;
+	private $studio;
+	private $studioUser;
 	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
         $this->user_id = $sessionUser['user_id'];
         $this->studio_id = $sessionUser['studio_id'];
+        $this->studioUser = new StudioUser();
+        $this->studio = new Studio();
 	}
 	/**
 	*studio submit identification info
@@ -49,9 +53,8 @@ class StudioController extends Controller
 	       		'result' => 'false',
     		]); 
 		}
-		$studioUser = new StudioUser();
 		$data['phone'] = $request->input('tel');
-		$code = $studioUser->getVerifyCode($data);
+		$code = $this->studioUser->getVerifyCode($data);
         if(!$code)
         {
                 return response()->json([
@@ -71,9 +74,8 @@ class StudioController extends Controller
         }
 		if($data)
 		{
-			$studio = new Studio();
-			$studioUser = new StudioUser();
-			$studioInfo = $studio->queryStudioInfo($data);
+
+			$studioInfo = $this->studio->queryStudioInfo($data);
 			if($studioInfo)
 			{
 				return response()->json([
@@ -82,15 +84,14 @@ class StudioController extends Controller
 	       			'result' => 'false',
     			]); 
 			}
-			$res_studio = $studio->submitStudioInfo($data);
+			$res_studio = $this->studio->submitStudioInfo($data);
 			//填写工作室基本信息之后，在studio_users表增加管理员，0:管理员,1：普通用户
-			$studioInfo = $studio->queryStudioInfo($data);
+			$studioInfo = $this->studio->queryStudioInfo($data);
 			$data['studio_id'] = $studioInfo->studio_id;
-			$studioUser = new StudioUser();
-       		$randomCode = $studioUser->getRandomCode(5);
+       		$randomCode = $this->studioUser->getRandomCode(5);
 			$data['pwd'] = $randomCode;  //将这个随机码发送发到用户手机
 			$this->sendRandomCode($data['tel'],$randomCode);
-			$res_user = $studioUser->createUser($data);
+			$res_user = $this->studioUser->createUser($data);
 			if($res_studio&&$res_user)
 			{
 				return response()->json([
@@ -111,9 +112,8 @@ class StudioController extends Controller
     */
     private function sendRandomCode($phone,$str)
     {
-        $studioUser = new StudioUser(); 
         if (_checkPhone($phone)) {
-            $result = SENDSMS::sendSeeyouSMS($phone, array($str), "77073");
+            $result = SENDSMS::sendSeeyouSMS($phone, array($str), "77604");
             if($result->statusCode!=0) {
                  return response()->json([
                     'errNo' => ErrorCode::COMMON_GETVERTIFY_ERROR,

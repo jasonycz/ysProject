@@ -1,8 +1,4 @@
 <?php
-/**
-*
-* this is yangping's code,the time is 2016.03.01
-*/
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -13,6 +9,15 @@ use Illuminate\Http\Request;
 use App\Http\Models\StudioUser;
 use App\Http\UpYun;
 use App\Http\Models\sms\SENDSMS;
+use Swagger\Annotations as SWG;
+/** 
+ * @SWG\Info( 
+ *   version=2.1,
+ *   title="玉师傅API文档", 
+ *   description="版本 0.1", 
+ * ) 
+ * 
+ */  
 class IndexController extends Controller
 {
 	public function index()

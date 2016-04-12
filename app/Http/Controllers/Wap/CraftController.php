@@ -29,11 +29,19 @@ class CraftController extends Controller
 		$craftid = $request->input('craftid',0);
 		switch ($type) {
 			case 2: 
-				$list = $this->craft->queryTimeImage(intval($studioid),intval($craftid));
-				foreach ($list as $kl => $vl) {
+				$lists = $this->craft->queryTimeImage(intval($studioid),intval($craftid));
+				$tmp = array('1'=>'设计','2'=>'大型','3'=>'细工','4'=>'抛光');
+				$results = array();
+				foreach ($lists as $kl => $vl) {
 					$arr = explode(',',$vl['process_img']);
-					$list[$kl]['img'][] = $this->cimg->queryImages($arr,intval($studioid),intval($craftid));
+					$imgarr = $this->cimg->queryImages($arr,intval($studioid),intval($craftid));
+					foreach ($imgarr as $ka=> $va) {
+						$imgtmp[] = $va['img_url'];
+					}
+					$results[$kl] = array('name'=>$tmp[$vl['process_class']],'describe'=>$vl['describe'],'img'=>$imgtmp);
 				}
+				$list['id'] = $craftid;
+				$list['timeLine'] = $results;
 				break;
 			default:
 				$list = $this->craft->queryJoinArticle(intval($studioid),intval($craftid));
@@ -47,7 +55,7 @@ class CraftController extends Controller
 			]);
 		}
 		return response()->json([
-       			'errNo' => 200,
+       			'errNo' => 0,
        			'errMsg' => '数据为空',
        			'result' => $list,
 		]);
@@ -178,7 +186,7 @@ EOF;
 	    }
 	    return $str;
   	}
-  	private function getJsApiTicket() {
+  	private function getJsApiTicket() { //先获得token，通过token获得ticket
   		$ticketFile = './resources/weixin/ticketfile';
 	    $data = json_decode(file_get_contents($ticketFile));
 	    if ($data->expire_time < time()) {
@@ -250,7 +258,7 @@ EOF;
 			$res[$kc] = array('craft_id'=>$vc['craft_id'],'craft_name'=>$vc['craft_name'],'describe'=>$vc['describe'],'img'=>array('url'=>$imgres['img_url'],'imgdesc'=>$imgres['describe']));
 		} 
 		return response()->json([
-       			'errNo' => 200,
+       			'errNo' => 0,
        			'errMsg' => '数据为空',
        			'result' => $res,
 		]);

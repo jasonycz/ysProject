@@ -122,7 +122,8 @@ return [
     */
 
     'providers' => [
-
+        
+       Jlapp\Swaggervel\SwaggervelServiceProvider::class,
         /*
          * Laravel Framework Service Providers...
          */
