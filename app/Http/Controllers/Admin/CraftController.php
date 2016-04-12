@@ -214,13 +214,13 @@ class CraftController extends Controller
 		if(empty($cid))
 		{
 			return response()->json([
-       			'errNo' => 200,
+       			'errNo' => ErrorCode::COMMON_CRAFT_GET,
        			'errMsg' => '数据为空',
        			'result' => 'false',
 			]);
 		}
 		return response()->json([
-       			'errNo' => 200,
+       			'errNo' => ErrorCode::COMMON_OK,
        			'errMsg' => '雕件id',
        			'result' => $cid,
 			]);
