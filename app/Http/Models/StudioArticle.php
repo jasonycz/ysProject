@@ -31,12 +31,16 @@ class StudioArticle extends Model
 	//查询雕件是否发布文章
 	public function isHasArticle($studioid,$craft_id,$aid)
 	{
-		return $this->where('studio_id',$studioid)
+		$article = $this->where('studio_id',$studioid)
 					->where('craft_id',$craft_id)
 					->where('article_id',$aid)
 					->select('article_id')
-					->first()->toArray();
-
+					->first();
+		if($article)
+		{
+			return $article->toArray();
+		}
+		return null;
 	}
 	//查询文章内容
 	public function queryContent($aid,$craft_id,$studio_id)

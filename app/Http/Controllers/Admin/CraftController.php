@@ -344,7 +344,7 @@ class CraftController extends Controller
 		$content = $request->input('content');
 		$craft_id = $request->input('craft_id',0);
 		$ispublish = $request->input('publish',0);
-		$measurement = $request->input(' measurement');
+		$measurement = $request->input('measurement');
 		$type = $request->input('type');
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
@@ -365,13 +365,14 @@ class CraftController extends Controller
 	    		]);
 		}
 		$params['content'] = $content;
+		$data['measurement'] = $measurement;
+		$data['type'] = $type;
 		if(empty($aid) && !isset($aid)){
 			$params['studio_id'] = $this->studioId;
 			$params['craft_id'] = $craft_id;
 			$params['ispublish'] = $ispublish;
 			$params['studio_user_id'] = $this->loginId;
-			$params['measurement'] = $measurement;
-			$params['type'] = $type;
+			$craft = $this->craft->updateCraft($craft_id,$data);
 			$lastid = $this->posts->addArticle($params);
 			if($lastid >= 1){
 				if($ispublish == 1){
@@ -416,6 +417,7 @@ class CraftController extends Controller
 		       		'result' => '',
 	    		]);
 			}
+			$craft = $this->craft->updateCraft($craft_id,$data);
 			$upid = $this->posts->updateArticle($aid,$params);
 			if($upid)
 			{
