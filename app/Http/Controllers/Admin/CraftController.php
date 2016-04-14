@@ -192,12 +192,12 @@ class CraftController extends Controller
 	//雕件时间轴页面删除图片
 	public function delImage(Request $request){
 		$imagePath = $request->input('imgurl');
+		$imagePath = str_replace(env('UPYUN_AVATAR_DOMAIN'), '', $imagePath);
 		try {
 	        $ret = $this->upyun->deleteFile($imagePath);
-	        fclose($fp);
 	        return response()->json([
 	            'errNo' => 0,
-	            'errMsg' => '',
+	            'errMsg' => '删除成功',
 	            'result' => ''
 	        ]);
 	    } catch (Exception $e) {
