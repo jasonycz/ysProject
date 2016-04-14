@@ -94,16 +94,27 @@ class Craft extends Model
 	//查询参数是否合法
 	public function isExists($studioid,$craft_id)
 	{
-		return $this ->where('studio_id',$studioid)
+		$craft =  $this->where('studio_id',$studioid)
 					 ->where('craft_id',$craft_id)
 					 ->select('craft_id','status')
-					 ->first()->toArray();
+					 ->first();
+		if($craft)
+		{
+			return $craft->toArray();
+		}
+		return null;
 	}
 	//更改雕件状态
 	public function saveStatus($studioid,$craft_id,$data)
 	{
 		return $this->where('studio_id',$studioid)
 					->where('craft_id',$craft_id)
+					->update($data);
+	}
+	//更新玉石字段
+	public function updateCraft($craft_id,$data)
+	{
+		return $this->where('craft_id',$craft_id)
 					->update($data);
 	}
 }

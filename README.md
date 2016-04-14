@@ -20,3 +20,14 @@ chore：构建过程或辅助工具的变动
 日常使用说明  
 	http://blog.jobbole.com/96088/
 */
+
+
+本地测试图片上传时，需要在.env文件增加upyun的配置信息
+//upyun config
+UPYUN_AVATAR_BUCKET = 'zyj-user-avatar'
+UPYUN_AVATAR_DOMAIN = 'http://zyj-user-avatar.b0.upaiyun.com'
+
+UPYUN_USER          = 'phpadmin'
+UPYUN_PWD           = 'Chen2016'
+UPYUN_SERVER        = 'v0.api.upyun.com'
+UPYUN_TIMEOUT       = 30
