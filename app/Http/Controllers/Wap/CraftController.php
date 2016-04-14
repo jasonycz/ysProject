@@ -254,7 +254,7 @@ EOF;
 			]);
 		}
 		foreach ($alllist as $kc => $vc) {
-			$imgres = $this->cimg->queryOneImg($this->studioId,$vc['craft_id']);
+			$imgres = $this->cimg->queryOneImg($studioid,$vc['craft_id']);
 			$res[$kc] = array('craft_id'=>$vc['craft_id'],'craft_name'=>$vc['craft_name'],'describe'=>$vc['describe'],'img'=>array('url'=>$imgres['img_url'],'imgdesc'=>$imgres['describe']));
 		} 
 		return response()->json([
