@@ -22,8 +22,8 @@ class IndexController extends Controller
 {
 	public function index()
     {
-    	return "This is Yushifu";
-        //return  response()->view('admin/index', []);
+    	
+        return  response()->view('admin/index', []);
     } 
 } 
 ?>

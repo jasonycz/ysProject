@@ -30,7 +30,7 @@ class CraftController extends Controller
 		switch ($type) {
 			case 2: 
 				$lists = $this->craft->queryTimeImage(intval($studioid),intval($craftid));
-				$tmp = array('1'=>'设计','2'=>'大型','3'=>'细工','4'=>'抛光');
+				// $tmp = array('1'=>'设计','2'=>'大型','3'=>'细工','4'=>'抛光');
 				$results = array();
 				foreach ($lists as $kl => $vl) {
 					$arr = explode(',',$vl['process_img']);
@@ -38,7 +38,7 @@ class CraftController extends Controller
 					foreach ($imgarr as $ka=> $va) {
 						$imgtmp[] = $va['img_url'];
 					}
-					$results[$kl] = array('name'=>$tmp[$vl['process_class']],'describe'=>$vl['describe'],'img'=>$imgtmp);
+					$results[$kl] = array('name'=>$vl['process_name'],'describe'=>$vl['describe'],'img'=>$imgtmp);
 				}
 				$list['id'] = $craftid;
 				$list['timeLine'] = $results;

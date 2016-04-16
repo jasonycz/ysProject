@@ -45,11 +45,22 @@ class StudioArticle extends Model
 	//查询文章内容
 	public function queryContent($aid,$craft_id,$studio_id)
 	{
-		return $this->where('article_id',$aid)
+		$info = $this->leftJoin('craft', 'craft.craft_id', '=', 'studio_article.craft_id')
+                    ->where('craft.craft_id' , $craft_id)
+                    ->where('craft.studio_id',$studio_id)
+                    ->where('studio_article.article_id',$aid)
+                    ->where('craft.status',9)
+                    ->where('craft.is_del',1)
+                    ->select('craft.craft_id','studio_article.author','studio_article.article_name','craft.created_time','studio_article.content','craft.craft_name','craft.measurement','craft.type','studio_article.article_id as aid')
+                    ->orderBy('craft.created_time', 'desc')
+                    ->get();
+        return $info->toArray();
+
+		/*return $this->where('article_id',$aid)
 					->where('studio_id',$studio_id)
 					->where('craft_id',$craft_id)
 					->select('article_name','author','article_time','content')
-					->first()->toArray();
+					->first()->toArray();*/
 	}
 	//新增文章
 	public function addArticle($params)
