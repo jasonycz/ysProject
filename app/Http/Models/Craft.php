@@ -46,7 +46,7 @@ class Craft extends Model
                     ->where('craft.studio_id',$studioid)
                     ->where('craft.status',9)
                     ->where('craft.is_del',1)
-                    ->select('craft.craft_id','craft_process.process_id','craft_process.process_class','craft_process.process_img','craft.created_time','craft_process.describe','craft.craft_name')
+                    ->select('craft.craft_id','craft_process.process_id','craft_process.process_class','craft_process.process_img','craft.created_time','craft_process.process_name','craft_process.describe','craft.craft_name')
                     ->orderBy('craft.created_time', 'desc')
                     ->get();
         return $info->toArray();
