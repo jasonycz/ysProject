@@ -229,6 +229,7 @@ class CraftController extends Controller
 	public function addTimeData(Request $request)
 	{
 		//类型与图片最好是数组格式'1'=>array('','','')
+		//{'1'=>[img=('',''),'process_class','describe','process_img']}
 		$pClass = $request->input('timeLine');
 		$craft_id = $request->input('craft_id');
 		$pid = $request->input('pid');
