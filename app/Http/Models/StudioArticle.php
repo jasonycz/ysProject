@@ -66,7 +66,7 @@ class StudioArticle extends Model
 	public function addArticle($params)
 	{
 		$res = $this
-                ->insert($params);
+                ->insertGetId($params);
         return $res;
 	}
 	//修改文章

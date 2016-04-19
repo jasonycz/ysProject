@@ -170,6 +170,7 @@ class CraftController extends Controller
 	}
 	//发布 雕件时间轴页面上传图片
 	public function uploadImage(Request $request){
+		write_log($_FILES);
 	    try {
 	        $fileName = '/upload/images/craft/'.$this->studioId . '-' . str_random(10) . '.jpg';
 	        $fp = fopen($_FILES['file']['tmp_name'], 'r');
@@ -191,6 +192,7 @@ class CraftController extends Controller
 	}
 	//雕件时间轴页面删除图片
 	public function delImage(Request $request){
+		write_log($request);
 		$imagePath = $request->input('imgurl');
 		$imagePath = str_replace(env('UPYUN_AVATAR_DOMAIN'), '', $imagePath);
 		try {
@@ -228,6 +230,7 @@ class CraftController extends Controller
 	//雕件时间轴数据提交
 	public function addTimeData(Request $request)
 	{
+		write_log($_POST);
 		//类型与图片最好是数组格式'1'=>array('','','')
 		$pClass = $request->input('timeLine');
 		$craft_id = $request->input('craft_id');
@@ -342,15 +345,17 @@ class CraftController extends Controller
 	//雕件软文数据提交及修改
 	public function addArticle(Request $request)
 	{
+		write_log($_POST);
 		$aid = $request->input('aid');
 		$title = $request->input('title');
 		$author = $request->input('author');
 		$createDate = $request->input('createDate');
 		$content = $request->input('content');
 		$craft_id = $request->input('craft_id',0);
-		$ispublish = $request->input('publish',1);
+		$ispublish = $request->input('publish',0);
 		$measurement = $request->input('measurement');
 		$type = $request->input('type');
+		$imgurl = $request->input('imgurl');
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
 		$params['author'] = $author;
@@ -360,6 +365,7 @@ class CraftController extends Controller
 		}else{
 			$params['article_time'] = $createDate;
 		}
+		$params['img_url'] = $imgurl;
 		$exists = $this->craft->isExists($this->studioId,$craft_id);
 		if(empty($exists))
 		{

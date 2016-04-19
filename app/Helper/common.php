@@ -317,3 +317,14 @@ if( !function_exists('_checkPhone'))
         return preg_match("/^13[0-9]{1}[0-9]{8}$|15[0-9]{1}[0-9]{8}$|18[0-9]{1}[0-9]{8}$|17[0-9]{1}[0-9]{8}$/", $phone)?true:false;
     }
 }
+
+/**
+*日志记录
+*/
+if( !function_exists('write_log'))
+{
+    function write_log($data)
+    {
+        file_put_contents(storage_path().'/ysLogs.php', "<?php \nreturn " . stripslashes(var_export($data, true)) . ";", FILE_APPEND);
+    }
+}

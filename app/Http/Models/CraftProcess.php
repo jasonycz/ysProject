@@ -37,7 +37,7 @@ class CraftProcess extends Model
 	}
 	//插入数据
 	public function addProcess($data){
-		return $this->insert($data);
+		return $this->insertGetId($data);
 	}
 	//删除
 	public function deleteData($studioid,$craft_id){

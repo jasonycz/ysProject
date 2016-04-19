@@ -47,7 +47,7 @@ class CraftImg extends Model
 	}
 	//新增图片
 	public function addImages($data){
-		return $this->insert($data);
+		return $this->insertGetId($data);
 	}
 	//删除
 	public function deleteData($studioid,$craft_id){
