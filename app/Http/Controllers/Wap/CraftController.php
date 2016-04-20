@@ -64,11 +64,11 @@ class CraftController extends Controller
 	public function showWxSdk()
 	{
 		//分享需要的参数
-		$appid = Config::get('weixin.APPID');
-		$appsecret = Config::get('weixin.APPSECRET');
+		$appid = \Config::get('weixin.APPID');
+		$appsecret = \Config::get('weixin.APPSECRET');
         $jsapiTicket = $this->getJsApiTicket();
-        $tmp_REQUEST_URI = $_SERVER[REQUEST_URI];
-        $tick_url = "http://$_SERVER[HTTP_HOST]$tmp_REQUEST_URI";
+        $tmp_uri = $_SERVER['REQUEST_URI'];
+        $tick_url = "http://$_SERVER[HTTP_HOST]$tmp_uri";
         $timestamp = time();
         $nonceStr = $this->createNonceStr();
 		// 这里参数的顺序要按照 key 值 ASCII 码升序排序
@@ -187,14 +187,18 @@ EOF;
 	    return $str;
   	}
   	private function getJsApiTicket() { //先获得token，通过token获得ticket
-  		$ticketFile = './resources/weixin/ticketfile';
-	    $data = json_decode(file_get_contents($ticketFile));
-	    if ($data->expire_time < time()) {
+  		$data = (object)array('expire_time'=>'');
+  		$ticketFile = './resources/weixin/ticketfile.txt';
+  		if(is_file($ticketFile)){
+	    	$data = json_decode(file_get_contents($ticketFile));
+		}
+		$ticket = '';
+	    if ($data->expire_time < time() || empty($data)) {
 	      $accessToken = $this->getAccessToken();
 	      $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=$accessToken";
-	      $res = json_decode($this->curlGetInfo($url));
-	      $ticket = $res->ticket;
-	      if ($ticket) {
+	      $res = json_decode($this->curlGetInfo($url),true);
+	      if (!empty($res) && array_key_exists('ticket', $res)) {
+		        $ticket = $res['ticket'];
 		        $data->expire_time = time() + 7000;
 		        $data->jsapi_ticket = $ticket;
 		        file_put_contents($ticketFile,json_encode($data),LOCK_EX);
@@ -205,13 +209,19 @@ EOF;
 	    return $ticket;
   	}
   	private function getAccessToken() {
-  		$accessTokenFile = './resources/weixin/accesstokenfile';;
-	    $data = json_decode(file_get_contents($accessTokenFile));
-	    if ($data->expire_time < time()) {
-	      $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appid."&secret=".$appsecret;      
-	      $res = json_decode($this->curlGetInfo($url));
-	      $access_token = $res->access_token;
-	      if ($access_token) {
+  		$data = (object)array('expire_time'=>'');
+  		$accessTokenFile = './resources/weixin/accesstokenfile.txt';
+  		if(is_file($accessTokenFile)){
+	    	$data = json_decode(file_get_contents($accessTokenFile));
+		}
+		$access_token = '';
+	    if ($data->expire_time < time() || empty($data)) {
+	    	$appid = \Config::get('weixin.APPID');
+			$appsecret = \Config::get('weixin.APPSECRET');
+	      $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appid."&secret=".$appsecret;
+	      $res = json_decode($this->curlGetInfo($url),true);
+	      if (!empty($res) && array_key_exists('access_token', $res)) {
+	      		$access_token = $res['access_token'];
 	         	$data->expire_time = time() + 7000;
 	         	$data->access_token = $access_token;
 	         	file_put_contents($accessTokenFile,json_encode($data),LOCK_EX);

@@ -499,9 +499,16 @@ class CraftController extends Controller
 			}
 		}else{
 			$tmp['article_name'] = '';
-			$tmp['article_time'] = '';
+			$tmp['created_time'] = '';
 			$tmp['content'] = '';
 			$tmp['author'] = '';
+			$tmp['craft_id'] = '';
+			$tmp['content'] = '';
+			$tmp['craft_name'] = '';
+			$tmp['measurement'] = '';
+			$tmp['type'] = '';
+			$tmp['aid'] = '';
+			$tmp['img_url'] = '';
 			return response()->json([
 		       		'errNo' => 0,
 		       		'errMsg' => '文章内容',

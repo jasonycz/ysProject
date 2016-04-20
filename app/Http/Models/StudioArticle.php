@@ -51,9 +51,9 @@ class StudioArticle extends Model
                     ->where('studio_article.article_id',$aid)
                     ->where('craft.status',9)
                     ->where('craft.is_del',1)
-                    ->select('craft.craft_id','studio_article.author','studio_article.article_name','craft.created_time','studio_article.content','craft.craft_name','craft.measurement','craft.type','studio_article.article_id as aid')
+                    ->select('craft.craft_id','studio_article.author','studio_article.article_name','craft.created_time','studio_article.content','craft.craft_name','craft.measurement','craft.type','studio_article.article_id as aid','studio_article.img_url')
                     ->orderBy('craft.created_time', 'desc')
-                    ->get();
+                    ->first();
         return $info->toArray();
 
 		/*return $this->where('article_id',$aid)

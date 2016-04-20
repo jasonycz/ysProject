@@ -1,5 +1,5 @@
 <?php
 return [
-	'APPID' => '',
+	'APPID' => 'wxe970f38660bdd8fa',
 	'APPSECRET' => '',	
 ];
