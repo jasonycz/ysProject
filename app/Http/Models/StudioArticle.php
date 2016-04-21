@@ -62,6 +62,20 @@ class StudioArticle extends Model
 					->select('article_name','author','article_time','content')
 					->first()->toArray();*/
 	}
+	//查询文章id
+	public function getaid($craft_id,$studio_id){
+		$res = $this->where('studio_id',$studio_id)
+					->where('craft_id',$craft_id)
+					->select('article_id')
+					->first();
+		if(!empty($res)){
+			return $res->toArray();	
+		}else{
+			return array('article_id'=>'');
+		}
+		
+		
+	}
 	//新增文章
 	public function addArticle($params)
 	{

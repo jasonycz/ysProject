@@ -27,8 +27,8 @@ class CraftController extends Controller
 		$sessionUser = $request->session()->get('userInfo');
         $this->loginId = $sessionUser['user_id'];
 		$this->studioId = $sessionUser['studio_id'];
-		// $this->loginId = 1;
-		// $this->studioId = 1;
+		$this->loginId = 1;
+		$this->studioId = 1;
 		$this->craft = new Craft();
 		$this->craftimg = new Craftimg();
 		$this->posts = new StudioArticle();
@@ -52,6 +52,11 @@ class CraftController extends Controller
 	       		'result' => '',
     		]); 
 		} 
+		foreach ($nocrafts as $kn => $vn) {
+			$artiarr = $this->posts->getaid($vn['craft_id'],intval($this->studioId));
+			$vn['aid'] = $artiarr['article_id'];
+			$nocrafts[$kn] = $vn;
+		}
 		return response()->json([
        		'errNo' => 0,
        		'errMsg' => 'true',
