@@ -50,7 +50,7 @@ class StudioArticle extends Model
                     ->where('craft.studio_id',$studio_id)
                     ->where('studio_article.article_id',$aid)
                     ->where('craft.is_del',1)
-                    ->select('craft.craft_id','studio_article.author','studio_article.article_name as title','studio_article.article_time as createdate','studio_article.content','craft.measurement','craft.type','studio_article.article_id as aid','studio_article.img_url as imgurl')
+                    ->select('craft.craft_id','studio_article.author','studio_article.article_name as title','studio_article.article_time as createDate','studio_article.content','craft.craft_name as craftname','craft.measurement','craft.type','studio_article.article_id as aid','studio_article.img_url as imgurl')
                     ->orderBy('craft.created_time', 'desc')
                     ->first();
         if(!empty($info)){

@@ -361,6 +361,7 @@ class CraftController extends Controller
 		$measurement = $request->input('measurement');
 		$type = $request->input('type');
 		$imgurl = $request->input('imgurl');
+		$craftname = $request->input('craftname');
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
 		$params['author'] = $author;
@@ -383,6 +384,7 @@ class CraftController extends Controller
 		$params['content'] = $content;
 		$data['measurement'] = $measurement;
 		$data['type'] = $type;
+		$data['craft_name'] = $craftname;
 		if(empty($aid) && !isset($aid)){
 			$params['studio_id'] = $this->studioId;
 			$params['craft_id'] = $craft_id;
