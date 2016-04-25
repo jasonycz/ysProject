@@ -503,17 +503,16 @@ class CraftController extends Controller
 	    		]);
 			}
 		}else{
-			$tmp['article_name'] = '';
-			$tmp['created_time'] = '';
+			$tmp['title'] = '';
+			$tmp['createdate'] = '';
 			$tmp['content'] = '';
 			$tmp['author'] = '';
 			$tmp['craft_id'] = '';
 			$tmp['content'] = '';
-			$tmp['craft_name'] = '';
 			$tmp['measurement'] = '';
 			$tmp['type'] = '';
 			$tmp['aid'] = '';
-			$tmp['img_url'] = '';
+			$tmp['imgurl'] = '';
 			return response()->json([
 		       		'errNo' => 0,
 		       		'errMsg' => '文章内容',
