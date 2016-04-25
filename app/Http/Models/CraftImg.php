@@ -30,11 +30,16 @@ class CraftImg extends Model
 	//根据工作室id和玉石id，图片倒叙，选取最后一种图片
 	public function queryOneImg($studioid,$craftid)
 	{
-		return $this->where('studio_id',$studioid)
+		$one = $this->where('studio_id',$studioid)
 					->where('craft_id',$craftid)
 					->select('describe','img_url')
 					->orderBy('created_time','desc')
-					->first()->toArray();
+					->first();
+		if(!empty($one)){
+			return $one->toArray();
+		}else{
+			return null;
+		}
 	}
 	//手机端查询时间轴的图片
 	public function queryImages($imgidstr,$studioid,$craftid)
