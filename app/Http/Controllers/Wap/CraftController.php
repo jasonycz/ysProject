@@ -187,47 +187,50 @@ EOF;
 	    return $str;
   	}
   	private function getJsApiTicket() { //先获得token，通过token获得ticket
-  		$data = (object)array('expire_time'=>'');
-  		$ticketFile = './resources/weixin/ticketfile.txt';
-  		if(is_file($ticketFile)){
-	    	$data = json_decode(file_get_contents($ticketFile));
+  		$data = array('expire_time'=>'');
+  		$ticketFile = '../resources/weixin/ticketfile.php';
+  		if(!is_file($ticketFile)){
+	    	$data = file_put_contents($ticketFile, "<?php \nreturn " . stripslashes(var_export($data, true)) . ";", LOCK_EX);
+		}else{
+			$data = require_once($ticketFile);
 		}
 		$ticket = '';
-	    if ($data->expire_time < time() || empty($data)) {
+	    if ($data['expire_time'] < time() || empty($data)) {
 	      $accessToken = $this->getAccessToken();
 	      $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=$accessToken";
 	      $res = json_decode($this->curlGetInfo($url),true);
 	      if (!empty($res) && array_key_exists('ticket', $res)) {
 		        $ticket = $res['ticket'];
-		        $data->expire_time = time() + 7000;
-		        $data->jsapi_ticket = $ticket;
-		        file_put_contents($ticketFile,json_encode($data),LOCK_EX);
-	      }
+		        $tmp['expire_time'] = time() + 7000;
+		        $tmp['jsapi_ticket'] = $ticket;
+				file_put_contents($ticketFile, "<?php \nreturn " . stripslashes(var_export($tmp, true)) . ";", LOCK_EX);	      }
 	    } else {
-	      $ticket = $data->jsapi_ticket;
+	      $ticket = $data['jsapi_ticket'];
 	    }
 	    return $ticket;
   	}
   	private function getAccessToken() {
-  		$data = (object)array('expire_time'=>'');
-  		$accessTokenFile = './resources/weixin/accesstokenfile.txt';
-  		if(is_file($accessTokenFile)){
-	    	$data = json_decode(file_get_contents($accessTokenFile));
+  		$data = array('expire_time'=>'');
+  		$accessTokenFile = '../resources/weixin/accesstokenfile.php';
+  		if(!is_file($accessTokenFile)){
+	    	$data = file_put_contents($accessTokenFile, "<?php \nreturn " . stripslashes(var_export($data, true)) . ";", LOCK_EX);
+		}else{
+			$data = require_once($accessTokenFile);
 		}
 		$access_token = '';
-	    if ($data->expire_time < time() || empty($data)) {
+	    if ($data['expire_time'] < time() || empty($data)) {
 	    	$appid = \Config::get('weixin.APPID');
 			$appsecret = \Config::get('weixin.APPSECRET');
 	      $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appid."&secret=".$appsecret;
 	      $res = json_decode($this->curlGetInfo($url),true);
 	      if (!empty($res) && array_key_exists('access_token', $res)) {
 	      		$access_token = $res['access_token'];
-	         	$data->expire_time = time() + 7000;
-	         	$data->access_token = $access_token;
-	         	file_put_contents($accessTokenFile,json_encode($data),LOCK_EX);
+	         	$tmp['expire_time'] = time() + 7000;
+	         	$tmp['access_token'] = $access_token;
+	         	file_put_contents($accessTokenFile, "<?php \nreturn " . stripslashes(var_export($tmp, true)) . ";", LOCK_EX);
 	      }
 	    } else {
-	        $access_token = $data->access_token;
+	        $access_token = $data['access_token'];
 	    }
 	    return $access_token;
   	}
