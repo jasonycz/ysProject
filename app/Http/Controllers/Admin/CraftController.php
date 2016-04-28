@@ -237,6 +237,7 @@ class CraftController extends Controller
 	{
 		write_log($_POST);
 		//类型与图片最好是数组格式'1'=>array('','','')
+		//{'1'=>[img=('',''),'process_class','describe','process_img']}
 		$pClass = $request->input('timeLine');
 		$craft_id = $request->input('craft_id');
 		// $pid = $request->input('pid');
