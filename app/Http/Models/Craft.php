@@ -87,7 +87,7 @@ class Craft extends Model
 			$craft = $this
 					 ->where('craft_id',$craftId)
 					 ->update(['is_del'=>0]);
-			return $craft->toArray();
+			return $craft;
 		}
 		return null;
 	}
