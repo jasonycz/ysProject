@@ -29,11 +29,10 @@ class StudioArticle extends Model
 		return null;
 	}
 	//查询雕件是否发布文章
-	public function isHasArticle($studioid,$craft_id,$aid)
+	public function isHasArticle($studioid,$craft_id)
 	{
 		$article = $this->where('studio_id',$studioid)
 					->where('craft_id',$craft_id)
-					->where('article_id',$aid)
 					->select('article_id')
 					->first();
 		if($article)

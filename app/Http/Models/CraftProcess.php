@@ -45,6 +45,15 @@ class CraftProcess extends Model
 					->where('craft_id',$craft_id)
 					->delete();
 	}
+	//检查雕件是否发布时间轴
+	public function checkTime($studio_id,$craft_id){
+		$time = $this->where('studio_id',$studio_id)
+					->where('craft_id',$craft_id)
+					->select('process_id')
+					->get();
+		return $time->toArray();
+
+	}
 }
 
 ?>

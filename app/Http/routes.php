@@ -18,7 +18,7 @@ Route::post('user/resetpwd','Admin\StudioUserController@resetPassword')->middlew
 Route::post('user/resetbyphone','Admin\StudioUserController@resetPasswordPhone');
 //头像上传接口
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait')->middleware(['sessionLoginVerify']);
-Route::post('user/logout','Admin\StudioUserController@logout');
+Route::post('user/logout','Admin\StudioUserController@logout')->middleware(['sessionLoginVerify']);
 //工作室接口列表
 //申请工作室信息
 Route::post('studio/apply','Admin\StudioController@submitStudioInfo');//->middleware(['sessionLoginVerify']);
@@ -29,15 +29,15 @@ Route::get('studio/listnofinish','Admin\CraftController@showAllCraft')->middlewa
 //查看发布后的作品
 Route::get('studio/showonecraft','Admin\CraftController@showProduction')->middleware(['sessionLoginVerify']);
 //点击创建时,返回最后以后雕件id
-Route::get('studio/getcid','Admin\CraftController@getLastCid')->middleware(['sessionLoginVerify']);;
+Route::get('studio/getcid','Admin\CraftController@getLastCid')->middleware(['sessionLoginVerify']);
 //新建雕件文章或修改雕件文章
 Route::post('studio/upData','Admin\CraftController@addArticle')->middleware(['sessionLoginVerify']);
 //新增雕件时间轴或修改时间轴
 Route::post('studio/upTimeData','Admin\CraftController@addTimeData')->middleware(['sessionLoginVerify']);
 //雕件文章发布
-Route::post('studio/publish','Admin\CraftController@publishArticle')->middleware(['sessionLoginVerify']);
+Route::post('studio/publish','Admin\CraftController@publishCraft')->middleware(['sessionLoginVerify']);
 //删除已发布雕件
-Route::post('studio/delcraft','Admin\CraftController@delCraft')->middleware(['sessionLoginVerify']);
+Route::post('studio/delcraft','Admin\CraftController@delCraft')->middleware(['sessionLoginVerify']);;
 //时间轴图片上传到upyun
 Route::post('studio/uploaduyimg','Admin\CraftController@uploadImage')->middleware(['sessionLoginVerify']);
 //时间轴删除上传到upyun的图片

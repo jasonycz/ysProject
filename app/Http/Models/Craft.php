@@ -21,6 +21,7 @@ class Craft extends Model
 					->where('studio_id',$studioId)
 					->where('studio_user_id',$uid)
 					->whereIn('status',[6,7,8])
+					->where('is_del',1)
 					->select('craft_name','status','craft_id')
 					->orderBy('created_time','desc')
 					->get()->toArray();
@@ -58,6 +59,10 @@ class Craft extends Model
 					->where('status',5)
 					->select('craft_id')
 					->first();
+	}
+	//新增默认雕件
+	public function createDefaultCid($params){
+		return $this->insertGetId($params);
 	}
 	/**
 	*查询工作室已发布成品

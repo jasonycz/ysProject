@@ -122,6 +122,58 @@ class CraftController extends Controller
     		]);
 		}
 	}
+	//发布雕件
+	public function publishCraft(Request $request)
+	{
+		$craft_id = $request->input('craft_id');
+		$exist = $this->craft->isExists(intval($this->studioId),intval($craft_id));
+		if($exist['status'] == 9){
+			return response()->json([
+	       		'errNo' => 900010,
+	       		'errMsg' => '雕件已发布',
+	       		'result' => '',
+    		]);
+		}
+		if(empty($exist)){
+			return response()->json([
+	       		'errNo' => 900011,
+	       		'errMsg' => '雕件id不合法',
+	       		'result' => '',
+    		]);
+		}
+		$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id));
+		if(empty($hasArt))
+		{
+			return response()->json([
+	       		'errNo' => 900012,
+	       		'errMsg' => '未创建软文',
+	       		'result' => '',
+    		]);
+		}
+		$hasimg = $this->process->checkTime(intval($this->studioId),intval($craft_id));
+		if(empty($hasimg))
+		{
+			return response()->json([
+	       		'errNo' => 900013,
+	       		'errMsg' => '未创建时间轴',
+	       		'result' => '',
+    		]);
+		}
+		$res = $this->craft->saveStatus(intval($this->studioId),intval($craft_id),array('status'=>9));
+		if(!empty($res)){
+			return response()->json([
+	       		'errNo' => 0,
+	       		'errMsg' => '发布成功',
+	       		'result' => '',
+    		]);
+		}else{
+			return response()->json([
+	       		'errNo' => 900014,
+	       		'errMsg' => '发布失败',
+	       		'result' => '',
+    		]);
+		}
+	}
 	/**查看发布后的单个作品
 	*input: 工作室id,作品id,及类型,默认为1时间轴,2,文章
 	*/
@@ -218,6 +270,21 @@ class CraftController extends Controller
 	public function getLastCid()
 	{
 		$cid = $this->craft->getCid(intval($this->studioId));
+		$param['craft_name'] = '新的雕件';
+		$param['created_time'] = date('Y-m-d H:i:s');
+		$param['studio_id'] = $this->studioId;
+		$param['studio_user_id'] = $this->loginId;
+		$param['material'] = '和田玉';
+		$param['size'] = 10;
+		$param['origin'] = '新疆和田玉'; 
+		$param['describe'] = '测试雕件';
+		$param['status'] = 5;
+		$param['is_del'] = 1;
+		$param['measurement'] = '玛瑙';
+		$param['type'] = '中';
+		if(empty($cid)){//如果没有,则新建一条测试数据
+			$cid = $this->craft->createDefaultCid($param);
+		}
 		if(empty($cid))
 		{
 			return response()->json([
