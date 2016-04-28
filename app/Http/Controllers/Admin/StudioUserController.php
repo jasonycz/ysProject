@@ -286,6 +286,11 @@ class StudioUserController extends Controller
     public function logout(Request $request)
     {
         $request->session()->forget('userInfo');
+        return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '注销成功',
+                    'result' => 'true',
+                ]); 
     }
 }
 ?>
