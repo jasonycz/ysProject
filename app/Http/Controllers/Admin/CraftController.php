@@ -419,7 +419,7 @@ class CraftController extends Controller
 	public function addArticle(Request $request)
 	{
 		write_log($_POST);
-		p("1323424");
+		p($_POST);
 		$aid = $request->input('aid');
 		$title = $request->input('title');
 		$author = $request->input('author');
