@@ -328,3 +328,13 @@ if( !function_exists('write_log'))
         file_put_contents(storage_path().'/ysLogs.php', "<?php \nreturn " . stripslashes(var_export($data, true)) . ";", FILE_APPEND);
     }
 }
+/**
+*临时日志记录 created by ycz 2016-04-29 15:38
+*/
+if( !function_exists('p'))
+{
+    function p($data)
+    {
+        file_put_contents(storage_path().'/temp.log', stripslashes(var_export($data, true))."\r\n", FILE_APPEND);
+    }
+}

@@ -292,7 +292,7 @@ class CraftController extends Controller
        			'errMsg' => '数据为空',
        			'result' => 'false',
 			]);
-		}
+		}	
 		return response()->json([
        			'errNo' => ErrorCode::COMMON_OK,
        			'errMsg' => '雕件id',
@@ -419,6 +419,7 @@ class CraftController extends Controller
 	public function addArticle(Request $request)
 	{
 		write_log($_POST);
+		p("1323424");
 		$aid = $request->input('aid');
 		$title = $request->input('title');
 		$author = $request->input('author');
