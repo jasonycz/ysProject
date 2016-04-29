@@ -504,7 +504,12 @@ class CraftController extends Controller
 	    		]);
 			}
 		}else{
-			$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id),intval($aid));
+			p('craft_id');
+			p($craft_id);
+			p('studioId');
+			p($this->studioId);
+			$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id));
+			//$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id),intval($aid));
 			if(empty($hasArt))
 			{
 				return response()->json([
