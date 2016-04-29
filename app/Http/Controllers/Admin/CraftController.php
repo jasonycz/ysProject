@@ -419,8 +419,10 @@ class CraftController extends Controller
 	public function addArticle(Request $request)
 	{
 		//write_log($_POST);
-		p($request);
+		// p($request);
 		$aid = $request->input('aid');
+		p('aid');
+		p($aid);
 		$title = $request->input('title');
 		$author = $request->input('author');
 		$createDate = $request->input('createDate');
@@ -431,8 +433,7 @@ class CraftController extends Controller
 		$type = $request->input('type');
 		$imgurl = $request->input('imgurl');
 		$craftname = $request->input('craftname');
-		p("craftname:");
-		p($craftname);
+
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
 		$params['author'] = $author;
@@ -456,6 +457,8 @@ class CraftController extends Controller
 		$data['measurement'] = $measurement;
 		$data['type'] = $type;
 		$data['craft_name'] = $craftname;
+		p('data');
+		p($data);
 		if(empty($aid) && !isset($aid)){
 			$params['studio_id'] = $this->studioId;
 			$params['craft_id'] = $craft_id;
@@ -463,6 +466,10 @@ class CraftController extends Controller
 			$params['studio_user_id'] = $this->loginId;
 			$craft = $this->craft->updateCraft($craft_id,$data);
 			$lastid = $this->posts->addArticle($params);
+			p('lastid');
+			p($lastid );
+			p('ispublish');
+			p($ispublish);
 			if($lastid >= 1){
 				if($ispublish == 1){
 					switch ($exists['status']) {
