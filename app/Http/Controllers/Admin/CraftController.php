@@ -509,6 +509,8 @@ class CraftController extends Controller
 			p('studioId');
 			p($this->studioId);
 			$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id));
+			p($hasArt);
+			p(print_r($hasArt));
 			//$hasArt = $this->posts->isHasArticle(intval($this->studioId),intval($craft_id),intval($aid));
 			if(empty($hasArt))
 			{
