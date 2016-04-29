@@ -460,7 +460,7 @@ class CraftController extends Controller
 		p('data');
 		p($data);
 		//if(empty($aid) && !isset($aid)){
-		if(empty($aid) && !isset($aid)){
+		if(empty($aid) && isset($aid)){
 			$params['studio_id'] = $this->studioId;
 			$params['craft_id'] = $craft_id;
 			$params['ispublish'] = $ispublish;
