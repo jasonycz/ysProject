@@ -35,6 +35,8 @@ class StudioArticle extends Model
 					->where('craft_id',$craft_id)
 					->select('article_id')
 					->first();
+					p("$article ");
+		p($article );
 		if($article)
 		{
 			return $article->toArray();
