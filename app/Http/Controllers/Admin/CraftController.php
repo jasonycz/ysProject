@@ -418,8 +418,8 @@ class CraftController extends Controller
 	//雕件软文数据提交及修改
 	public function addArticle(Request $request)
 	{
-		write_log($_POST);
-		p($_POST);
+		//write_log($_POST);
+		p($request);
 		$aid = $request->input('aid');
 		$title = $request->input('title');
 		$author = $request->input('author');
@@ -431,6 +431,8 @@ class CraftController extends Controller
 		$type = $request->input('type');
 		$imgurl = $request->input('imgurl');
 		$craftname = $request->input('craftname');
+		p("craftname:");
+		p($craftname);
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
 		$params['author'] = $author;
