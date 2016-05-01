@@ -125,7 +125,7 @@ class CraftController extends Controller
 	//发布雕件
 	public function publishCraft(Request $request)
 	{
-		$craft_id = $request->input('craft_id');
+		$craft_id = $request->input('craft_id',0);
 		$exist = $this->craft->isExists(intval($this->studioId),intval($craft_id));
 		if($exist['status'] == 9){
 			return response()->json([
@@ -228,6 +228,7 @@ class CraftController extends Controller
 	//发布 雕件时间轴页面上传图片
 	public function uploadImage(Request $request){
 		write_log($_FILES);
+		write_log($request);
 	    try {
 	        $fileName = '/upload/images/craft/'.$this->studioId . '-' . str_random(10) . '.jpg';
 	        $fp = fopen($_FILES['file']['tmp_name'], 'r');
@@ -250,7 +251,14 @@ class CraftController extends Controller
 	//雕件时间轴页面删除图片
 	public function delImage(Request $request){
 		write_log($request);
-		$imagePath = $request->input('imgurl');
+		$imagePath = $request->input('imgurl','null');
+		if(empty($imagePath)){
+			return response()->json([
+	            'errNo' => 800010,
+	            'errMsg' => '图片地址不能为空',
+	            'result' => ''
+	        ]);
+		}
 		$imagePath = str_replace(env('UPYUN_AVATAR_DOMAIN'), '', $imagePath);
 		try {
 	        $ret = $this->upyun->deleteFile($imagePath);
@@ -302,17 +310,24 @@ class CraftController extends Controller
 	//雕件时间轴数据提交
 	public function addTimeData(Request $request)
 	{
-		write_log($_POST);
-		//类型与图片最好是数组格式'1'=>array('','','')
-		//{'1'=>[img=('',''),'process_class','describe','process_img']}
+		write_log($request);
+		//类型与图片最好是数组格式
+		// print_r($_POST);exit;
 		$pClass = $request->input('timeLine');
-		$craft_id = $request->input('craft_id');
+		$craft_id = $request->input('craft_id',0);
 		// $pid = $request->input('pid');
+		if(empty($pClass)){
+			return response()->json([
+		       		'errNo' => 500011,
+		       		'errMsg' => '参数不能为空',
+		       		'result' => array(),
+	    		]);
+		}
 		$exists = $this->craft->isExists($this->studioId,$craft_id);
 		if(empty($exists))
 		{
 			return response()->json([
-		       		'errNo' => -900010,
+		       		'errNo' => 500010,
 		       		'errMsg' => '玉件id不合法',
 		       		'result' => array(),
 	    		]);
@@ -325,8 +340,12 @@ class CraftController extends Controller
 		$this->process->deleteData($this->studioId,$craft_id);
 		$len = 0;
 		foreach ($pClass as $kc => $vc) {
+			if(is_array($vc['img'])){
+				$timeImg = $vc['img'];
+			}elseif(is_string( $vc['img'] ) ){
+				$timeImg = explode(',', $vc['img']);
+			}
 			$imgid = '';
-			$timeImg = explode(',', $vc['img']);
 			if(!empty($timeImg)){
 				foreach ($timeImg as $ki => $vi) {
 					$arr['img_url'] = $vi;
@@ -335,15 +354,17 @@ class CraftController extends Controller
 					$arr['studio_user_id'] = $this->loginId;
 					$arr['craft_id'] = $craft_id;
 					$imgid .= $this->craftimg->addImages($arr).',';
+
 				}
 			}
 			$parr['process_class'] = $kc+1;
-			$parr['process_name'] = $vc['name'];
-			$parr['describe'] = $vc['describe'];
-			$parr['process_img'] = rtrim(',',$imgid);
+			$parr['process_name'] = $vc['name'] == '' ? ' ' : $vc['name'];
+			$parr['describe'] = $vc['describe'] == '' ? ' ' : $vc['describe'];
+			$parr['process_img'] = rtrim($imgid,',');
 			$parr['studio_user_id'] = $this->loginId;
 			$parr['studio_id'] = $this->studioId;
 			$parr['craft_id'] = $craft_id;
+			$parr['created_time'] = date('Y-m-d H:i:s');
 			$lastid = $this->process->addProcess($parr);	
 			if($lastid >= 1){
 				$len++;
@@ -352,16 +373,22 @@ class CraftController extends Controller
 		if($len == count($pClass)){
 			switch ($exists['status']) {
 				case 6:
-					$arr['status'] = 9;
+					$craft['status'] = 8;
 					break;
 				case 8:
-					$arr['status'] = 9;
+					$craft['status'] = 8;
+					break;
+				case 5:
+					$craft['status'] = 7;
+					break;
+				case 9:
+					$craft['status'] = 9;
 					break;
 				default:
-					$arr['status'] = 6;
+					$craft['status'] = 7;
 					break;
 			}
-			$this->craft->saveStatus($this->studioId,$craft_id,$arr);
+			$this->craft->saveStatus($this->studioId,$craft_id,$craft);
 			return response()->json([
        			'errNo' => 0,
        			'errMsg' => '成功',
@@ -369,7 +396,7 @@ class CraftController extends Controller
 			]);
 		}else{
 			return response()->json([
-       			'errNo' => -900020,
+       			'errNo' => 500012,
        			'errMsg' => '失败',
        			'result' => array(),
 			]);
@@ -418,22 +445,22 @@ class CraftController extends Controller
 	//雕件软文数据提交及修改
 	public function addArticle(Request $request)
 	{
-		//write_log($_POST);
-		// p($request);
+<<<<<<< HEAD
+
+=======
+		write_log($request);
 		$aid = $request->input('aid');
-		p('aid');
-		p($aid);
-		$title = $request->input('title');
-		$author = $request->input('author');
-		$createDate = $request->input('createDate');
-		$content = $request->input('content');
+		$title = $request->input('title','null');
+		$author = $request->input('author','null');
+		$createDate = $request->input('createDate',NULL);
+		$content = $request->input('content','null');
 		$craft_id = $request->input('craft_id',0);
 		$ispublish = $request->input('publish',0);
-		$measurement = $request->input('measurement');
-		$type = $request->input('type');
-		$imgurl = $request->input('imgurl');
-		$craftname = $request->input('craftname');
-
+		$measurement = $request->input('measurement','null');
+		$type = $request->input('type','null');
+		$imgurl = $request->input('imgurl','null');
+		$craftname = $request->input('craftname','null');
+>>>>>>> develop
 		//需要增加必填项的判断
 		$params['article_name'] = $title;
 		$params['author'] = $author;
@@ -448,7 +475,7 @@ class CraftController extends Controller
 		if(empty($exists))
 		{
 			return response()->json([
-		       		'errNo' => 400013,
+		       		'errNo' => 400011,
 		       		'errMsg' => '玉件id不合法',
 		       		'result' => '',
 	    		]);
@@ -457,10 +484,11 @@ class CraftController extends Controller
 		$data['measurement'] = $measurement;
 		$data['type'] = $type;
 		$data['craft_name'] = $craftname;
-		p('data');
-		p($data);
-		if(empty($aid) && !isset($aid)){
-		//if(empty($aid) && isset($aid)){
+<<<<<<< HEAD
+
+=======
+		if(empty($aid) && !isset($aid))	{
+>>>>>>> develop
 			$params['studio_id'] = $this->studioId;
 			$params['craft_id'] = $craft_id;
 			$params['ispublish'] = $ispublish;
@@ -481,6 +509,12 @@ class CraftController extends Controller
 							case 7:
 								$arr['status'] = 9;
 								break;
+							case 8:
+								$arr['status'] = 8;
+								break;
+							case 9:
+								$arr['status'] = 9;
+								break;
 							default:
 								$arr['status'] = 6;
 								break;
@@ -489,6 +523,12 @@ class CraftController extends Controller
 						switch ($exists['status']) {
 							case 7:
 								$arr['status'] = 8;
+								break;
+							case 8:
+								$arr['status'] = 8;
+								break;
+							case 9:
+								$arr['status'] = 9;
 								break;
 							default:
 								$arr['status'] = 6;
@@ -503,8 +543,8 @@ class CraftController extends Controller
 	    		]);
 			}else{
 				return response()->json([
-		       		'errNo' => ErrorCode::COMMON_FAIL_ADD_ARTICLE,
-		       		'errMsg' => '发布失败',
+		       		'errNo' => 400013,
+		       		'errMsg' => '新增失败',
 		       		'result' => '',
 	    		]);
 			}
@@ -536,7 +576,7 @@ class CraftController extends Controller
 	    		]);
 			}else{
 				return response()->json([
-		       		'errNo' => 11,
+		       		'errNo' => 400010,
 		       		'errMsg' => '修改失败',
 		       		'result' => '',
 	    		]);
