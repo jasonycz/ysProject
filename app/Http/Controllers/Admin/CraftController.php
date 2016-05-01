@@ -228,6 +228,7 @@ class CraftController extends Controller
 	//发布 雕件时间轴页面上传图片
 	public function uploadImage(Request $request){
 		write_log($_FILES);
+		write_log($request);
 	    try {
 	        $fileName = '/upload/images/craft/'.$this->studioId . '-' . str_random(10) . '.jpg';
 	        $fp = fopen($_FILES['file']['tmp_name'], 'r');
