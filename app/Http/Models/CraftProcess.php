@@ -33,6 +33,7 @@ class CraftProcess extends Model
 					->where('craft_id',$craft_id)
 					// ->whereIn('process_class',[1,2,3,4])
 					->select('process_class','process_name','process_img','describe')
+					->orderBy('process_class', 'asc')
 					->get()->toArray();
 	}
 	//插入数据
