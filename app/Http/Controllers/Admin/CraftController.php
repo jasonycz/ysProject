@@ -30,7 +30,7 @@ class CraftController extends Controller
 		// $this->loginId = 1;
 		// $this->studioId = 1;
 		$this->craft = new Craft();
-		$this->craftimg = new Craftimg();
+		$this->craftimg = new CraftImg();
 		$this->posts = new StudioArticle();
 		$this->process = new CraftProcess();
 		$this->upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
@@ -353,7 +353,6 @@ class CraftController extends Controller
 					$arr['studio_user_id'] = $this->loginId;
 					$arr['craft_id'] = $craft_id;
 					$imgid .= $this->craftimg->addImages($arr).',';
-
 				}
 			}
 			$parr['process_class'] = $kc+1;
@@ -567,10 +566,14 @@ class CraftController extends Controller
 		if(!empty($plist))
 		{
 			foreach ($plist as $kp => $vp) {
-				$tmparr = explode(',', $vp['process_img']);
-				$imgarr = $this->craftimg->selectYsImg($tmparr,$this->studioId,$craft_id);
-				foreach ($imgarr as $ka=> $va) {
-					$imgtmp[] = $va['img_url'];
+				$tmparrstr = explode(',', $vp['process_img']);
+				$imgarr = $this->craftimg->selectYsImg($tmparrstr,$this->studioId,$craft_id);
+				if(!empty($imgarr)){
+					foreach ($imgarr as $ka=> $va) {
+						$imgtmp[] = $va['img_url'];
+					}
+				}else{
+					$imgtmp = array();
 				}
 				$results[$kp] = array('name'=>$vp['process_name'],'describe'=>$vp['describe'],'img'=>$imgtmp);
 			}

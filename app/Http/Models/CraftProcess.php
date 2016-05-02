@@ -31,7 +31,7 @@ class CraftProcess extends Model
 	{
 		return $this->where('studio_id',$studio_id)
 					->where('craft_id',$craft_id)
-					->whereIn('process_class',[1,2,3,4])
+					// ->whereIn('process_class',[1,2,3,4])
 					->select('process_class','process_name','process_img','describe')
 					->get()->toArray();
 	}
