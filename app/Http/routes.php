@@ -46,6 +46,9 @@ Route::post('studio/deluyimg','Admin\CraftController@delImage')->middleware(['se
 Route::get('studio/modifyArticle','Admin\CraftController@modifyArticle')->middleware(['sessionLoginVerify']);
 //时间轴修改页面
 Route::get('studio/modifyTime','Admin\CraftController@modifyTimeData')->middleware(['sessionLoginVerify']);
+//图片库---返回某工作室下的所有图片
+Route::get('studio/allimges','Admin\CraftController@returnAllImages')->middleware(['sessionLoginVerify']);
+
 
 //手机端手机预览雕件
 Route::get('wap/show','Wap\CraftController@showDetail');

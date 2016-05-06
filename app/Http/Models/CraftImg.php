@@ -60,6 +60,12 @@ class CraftImg extends Model
 					->where('craft_id',$craft_id)
 					->delete();
 	}
+	//返回工作室下所有图片
+	public function returnImages($studioid){
+		return $this->where('studio_id',$studioid)
+			        ->select('img_url')
+			        ->get()->toArray();
+	}
 }
 
 ?>
