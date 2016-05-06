@@ -13,13 +13,16 @@ use App\Http\Models\Craft;
 use App\Http\Models\StudioArticle;
 use App\Http\Models\CraftProcess;
 use App\Http\Models\CraftImg;
+use App\Http\Models\Studio;
 class CraftController extends Controller
 {
 	private $craft;
 	private $process;
+	private $studio;
 	public function __construct(Request $request){
 		$this->craft = new Craft();
 		$this->cimg = new CraftImg();
+		$this->studio = new Studio();
 	}
 	//工作室id,雕件id,类型type(时间轴2或软文1)
 	public function showDetail(Request $request)
@@ -266,13 +269,15 @@ EOF;
        			'result' => 'false',
 			]);
 		}
+		$phone = $this->studio->getOneField($studioid);
+		$res['phone'] = $phone->tel;
 		foreach ($alllist as $kc => $vc) {
 			$imgres = $this->cimg->queryOneImg($studioid,$vc['craft_id']);
 			$res[$kc] = array('craft_id'=>$vc['craft_id'],'craft_name'=>$vc['craft_name'],'describe'=>$vc['describe'],'img'=>array('url'=>$imgres['img_url'],'imgdesc'=>$imgres['describe']));
-		} 
+		}
 		return response()->json([
        			'errNo' => 0,
-       			'errMsg' => '数据为空',
+       			'errMsg' => '数据列表',
        			'result' => $res,
 		]);
 	}
