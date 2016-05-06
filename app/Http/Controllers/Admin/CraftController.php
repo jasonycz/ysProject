@@ -634,7 +634,6 @@ class CraftController extends Controller
 	//返回该工作下所有时间轴图片
 	public function returnAllImages(){
 		$imgs = $this->craftimg->returnImages(intval($this->studioId));
-		print_r($imgs);
 		if(empty($imgs)){
 			return response()->json([
 		       		'errNo' => 110010,
