@@ -49,7 +49,10 @@ Route::get('studio/modifyTime','Admin\CraftController@modifyTimeData')->middlewa
 //图片库---返回某工作室下的所有图片
 Route::get('studio/allimges','Admin\CraftController@returnAllImages')->middleware(['sessionLoginVerify']);
 
-
+//文章图片添加
+Route::post('craft/uploadarticleimages','Admin\CraftController@uploadArticleImages')->middleware(['sessionLoginVerify']);
+//文章图片获取
+Route::get('craft/getarticleimages','Admin\CraftController@getArticleImages')->middleware(['sessionLoginVerify']);
 //手机端手机预览雕件
 Route::get('wap/show','Wap\CraftController@showDetail');
 //手机端查看所有已发布作品

@@ -13,6 +13,7 @@ use App\Http\Models\Craft;
 use App\Http\Models\StudioArticle;
 use App\Http\Models\CraftProcess;
 use App\Http\Models\CraftImg;
+use App\Http\Models\ArticleImg;
 use App\Http\UpYun;
 class CraftController extends Controller
 {
@@ -23,6 +24,8 @@ class CraftController extends Controller
 	private $post;
 	private $process;
 	private $upyun;
+	private $upyun_article;
+	private $articleImage;
 	public function __construct(Request $request){
 		$sessionUser = $request->session()->get('userInfo');
         $this->loginId = $sessionUser['user_id'];
@@ -33,7 +36,11 @@ class CraftController extends Controller
 		$this->craftimg = new CraftImg();
 		$this->posts = new StudioArticle();
 		$this->process = new CraftProcess();
+		$this->articleImage = new ArticleImg();
 		$this->upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
+	        env('UPYUN_USER'), env('UPYUN_PWD'),
+	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
+		$this->upyun_article = new UpYun(env('UPYUN_ARTICLE_BUCKET'),
 	        env('UPYUN_USER'), env('UPYUN_PWD'),
 	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
 	}
@@ -647,6 +654,49 @@ class CraftController extends Controller
 		       		'result' =>array($imgs),
 	    	]);
 		}
+	}
+	//上传图片
+	public function uploadArticleImages(Request $request){
+		$craftId = $request->input('craft_id');
+		write_log($_FILES);
+		$img_url = [];
+		try {
+	    	foreach ($_FILES as $key => $value) {
+				$fileName = '/upload/article/images/craft/'.$this->studioId . '-' . str_random(10) . '.jpg';
+		        $fp = fopen($value['tmp_name'], 'r');
+		        $ret = $this->upyun->writeFile($fileName, $fp, true);
+		        fclose($fp);
+		        $img_url[$key] = env('UPYUN_ARTICLE_BUCKET') . $fileName;
+			}
+			$this->articleImage->insertImgs($this->loginId,$this->studioId,$craftId,$img_url);
+	        return response()->json([
+	            'errNo' => 0,
+	            'errMsg' => '',
+	            'result' => $img_url,
+	        ]);
+	    } catch (Exception $e) {
+	        return response()->json([
+	            'errNo' => $e->getCode(),
+	            'errMsg' => $e->getMessage(),
+	        ]);
+	    }
+	}
+	//获取文章图片
+	public function getArticleImages(Request $request){
+		$craftId = $request->input('craft_id');
+		$images = $this->articleImage->queryImagesByCraftId($craftId);
+		$articleImages = [];
+		foreach ($images as $key => $value) {
+			$articleImages[$key]['studio_user_id'] = $value->studio_user_id;
+			$articleImages[$key]['studio_id'] = $value->studio_id;
+			$articleImages[$key]['craft_id'] = $value->craft_id;
+			$articleImages[$key]['img_url'] = $value->img_url;
+		}
+		 return response()->json([
+	            'errNo' => 0,
+	            'errMsg' => '',
+	            'result' => $articleImages,
+	        ]);
 	}
 }
 ?>
