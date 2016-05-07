@@ -38,6 +38,7 @@ class CraftController extends Controller
 				foreach ($lists as $kl => $vl) {
 					$arr = explode(',',$vl['process_img']);
 					$imgarr = $this->cimg->queryImages($arr,intval($studioid),intval($craftid));
+					$imgtmp = [];
 					foreach ($imgarr as $ka=> $va) {
 						$imgtmp[] = $va['img_url'];
 					}
