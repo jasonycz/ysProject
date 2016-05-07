@@ -658,7 +658,6 @@ class CraftController extends Controller
 	//上传图片
 	public function uploadArticleImages(Request $request){
 		$craftId = $request->input('craft_id');
-		write_log($_FILES);
 		$img_url = [];
 		try {
 	    	foreach ($_FILES as $key => $value) {
