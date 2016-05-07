@@ -644,7 +644,7 @@ class CraftController extends Controller
 			return response()->json([
 		       		'errNo' => 0,
 		       		'errMsg' => '图片列表',
-		       		'result' => array($imgs),
+		       		'result' =>array($imgs),
 	    	]);
 		}
 	}

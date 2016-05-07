@@ -62,13 +62,14 @@ class CraftImg extends Model
 	}
 	//返回工作室下所有图片
 	public function returnImages($studioid){
-		/*return $this->select('img_url')
+		return $this->select('img_url')
 					->orderBy('created_time','desc')
-			        ->get()->toArray();*/
-		return $this->orderBy('created_time','desc')
+			        ->get()->take(10)->toArray();
+	/*	return $this->orderBy('created_time','desc')
 					->take(10)
 					->pluck('img_url');
-	}
+*/	}
+
 }
 
 ?>
