@@ -40,9 +40,6 @@ class CraftController extends Controller
 		$this->upyun = new UpYun(env('UPYUN_AVATAR_BUCKET'),
 	        env('UPYUN_USER'), env('UPYUN_PWD'),
 	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
-		$this->upyun_article = new UpYun(env('UPYUN_ARTICLE_BUCKET'),
-	        env('UPYUN_USER'), env('UPYUN_PWD'),
-	        env('UPYUN_SERVER'), env('UPYUN_TIMEOUT'));
 	}
 	/**
 	*展示工作室所有未发布雕件列表
@@ -657,6 +654,7 @@ class CraftController extends Controller
 	//上传图片
 	public function uploadArticleImages(Request $request){
 		$craftId = $request->input('craft_id');
+
 		$img_url = [];
 		try {
 	    	foreach ($_FILES as $key => $value) {
@@ -664,7 +662,7 @@ class CraftController extends Controller
 		        $fp = fopen($value['tmp_name'], 'r');
 		        $ret = $this->upyun->writeFile($fileName, $fp, true);
 		        fclose($fp);
-		        $img_url[$key] = env('UPYUN_ARTICLE_BUCKET') . $fileName;
+		        $img_url[$key] = env('UPYUN_AVATAR_DOMAIN') . $fileName;
 			}
 			$this->articleImage->insertImgs($this->loginId,$this->studioId,$craftId,$img_url);
 	        return response()->json([
