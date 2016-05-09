@@ -34,6 +34,7 @@ class CraftImg extends Model
 					->where('craft_id',$craftid)
 					->select('describe','img_url')
 					->orderBy('created_time','desc')
+					->orderBy('img_id','desc')
 					->first();
 		if(!empty($one)){
 			return $one->toArray();
