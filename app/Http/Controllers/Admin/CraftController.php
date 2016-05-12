@@ -566,11 +566,13 @@ class CraftController extends Controller
 	{
 		$craft_id = $request->input('craft_id',0);
 		$plist = $this->process->selectOne($this->studioId,$craft_id);
+
 		if(!empty($plist))
 		{
 			foreach ($plist as $kp => $vp) {
 				$tmparrstr = explode(',', $vp['process_img']);
 				$imgarr = $this->craftimg->selectYsImg($tmparrstr,$this->studioId,$craft_id);
+				$imgtmp = array();
 				if(!empty($imgarr)){
 					foreach ($imgarr as $ka=> $va) {
 						$imgtmp[] = $va['img_url'];
