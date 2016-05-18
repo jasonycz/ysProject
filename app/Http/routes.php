@@ -18,6 +18,9 @@ Route::post('user/resetpwd','Admin\StudioUserController@resetPassword')->middlew
 Route::post('user/resetbyphone','Admin\StudioUserController@resetPasswordPhone');
 //头像上传接口
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait')->middleware(['sessionLoginVerify']);
+//补全用户信息
+Route::post('user/supplyuserinfo','Admin\StudioUserController@supplyUserInfo')->middleware(['sessionLoginVerify']);
+
 Route::post('user/logout','Admin\StudioUserController@logout')->middleware(['sessionLoginVerify']);
 //工作室接口列表
 //申请工作室信息

@@ -37,6 +37,7 @@ class StudioController extends Controller
 		$data['address'] = $request->input('address');
 		$data['describe'] = $request->input('describe');
 		$data['verify_code'] = $request->input('verify_code');
+		$data['password'] = $request->input('password')
 		if(!$data['name']||!$data['address'])
 		{
 			return response()->json([
@@ -88,8 +89,8 @@ class StudioController extends Controller
 			//填写工作室基本信息之后，在studio_users表增加管理员，0:管理员,1：普通用户
 			$studioInfo = $this->studio->queryStudioInfo($data);
 			$data['studio_id'] = $studioInfo->studio_id;
-       		$randomCode = $this->studioUser->getRandomCode(6);
-			$data['pwd'] = $randomCode;  //将这个随机码发送发到用户手机
+       		//$randomCode = $this->studioUser->getRandomCode(6);
+			//$data['pwd'] = $randomCode;  //将这个随机码发送发到用户手机
 			$this->sendRandomCode($data['tel'],$randomCode);
 			$res_user = $this->studioUser->createUser($data);
 			if($res_studio&&$res_user)

@@ -71,6 +71,20 @@ class CraftImg extends Model
 					->take(10)
 					->pluck('img_url');
 */	}
+	//插入大师代表作图片和描述
+	public function insertDelegate($data,$delegate){
+		foreach ($delegate as $key => $value) {
+			$this->insertGetId(
+					array('studio_user_id' => $data['user_id'],
+						  'studio_id' => $data['studio_id'],
+						  'describe' => $value['describe'],
+						  'img_url' => $value['img_url'],
+						  'is_delegate' => 1
+ 						)
+				);
+		}
+
+	}
 
 }
 
