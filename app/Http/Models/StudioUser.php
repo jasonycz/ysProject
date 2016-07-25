@@ -41,7 +41,7 @@ class StudioUser extends Model
                     	'studio_id' => $data['studio_id'],
                     	'phone' => $data['tel'],
                     	'user_name' => $data['user_name'],
-                    	'pwd' => crypt($data['pwd'], $salt),
+                    	'pwd' => crypt($data['password'], $salt),
                     	'salt' => $salt,
                     	'is_admin' => 0
                 		)
@@ -49,6 +49,26 @@ class StudioUser extends Model
     		return $user;
     	}
     	return null;
+    }
+    //补全用户信息
+    public function supplyUserInfo($data)
+    {
+        if($data)
+        {
+            $user = DB::table($this->table)->
+                        where('user_id',$data['user_id'])
+                        ->update(
+                    array(
+                        'describe' => $data['describe'],
+                        'user_avatar' => $data['user_avatar'],
+                        'email' => $data['email'],
+                        'sex' => $data['sex'],
+                        'age' => $data['age']
+                        )
+                    );
+            return $user;
+        }
+        return null;
     }
     //根据user_name 检查用户是否已存在
     public function checkExists($uname)

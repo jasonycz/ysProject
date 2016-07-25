@@ -12,16 +12,19 @@ use Illuminate\Http\Request;
 use App\Http\Models\StudioUser;
 use App\Http\UpYun;
 use App\Http\Models\sms\SENDSMS; 
+use App\Http\Models\CraftImg;
 class StudioUserController extends Controller
 { 
     private $user_id;
     private $studio_id;
     private $studioUser;
+    private $craftImg;
     public function __construct(Request $request){
         $sessionUser = $request->session()->get('userInfo');
         $this->user_id = $sessionUser['user_id'];
         $this->studio_id = $sessionUser['studio_id'];
         $this->studioUser = new StudioUser();
+        $this->craftImg = new CraftImg();
     }
    public function test(Request $Request)
     {
@@ -272,6 +275,33 @@ class StudioUserController extends Controller
                     'result' => 'true',
                 ]);  
         }
+    }
+    //补充用户信息
+    public function supplyUserInfo(Request $request)
+    {
+        $data['age'] = $request['age'];
+        $data['describe'] = $request['describe']; //用户的简短描述
+        $data['user_avatar'] = $request['user_avatar'];
+        $data['email'] = $request['email'];
+        $data['sex'] = $request['sex'];
+        $data['user_id'] = $this->user_id;
+        $data['studio_id'] = $this->studio_id;
+        $data['delegate'] = $request->input('delegate');
+        $jsonObj=json_decode($request->input('delegate'));
+        $delegateJson = $jsonObj->delegate;
+        foreach ($delegateJson as $key => $value) {
+            $delegate[$key]['describe'] = $value->describe;
+            $delegate[$key]['img_url'] = $value->img_url;
+        }
+        if($delegate != null){
+            $this->craftImg->insertDelegate($data,$delegate);
+        }
+        $this->studioUser->supplyUserInfo($data);
+        return response()->json([
+                    'errNo' => ErrorCode::COMMON_OK,
+                    'errMsg' => '用户信息补全成功',
+                    'result' => 'true',
+                ]);  
     }
 
     //控制用户授权

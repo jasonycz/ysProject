@@ -41,6 +41,10 @@ class Studio extends Model
 		}
 		return null;
 	}
+	//查询工作室下的手机号
+	public function getOneField($studioid){
+		return DB::table('studio')->select('tel')->first();
+	}
 
 }
 

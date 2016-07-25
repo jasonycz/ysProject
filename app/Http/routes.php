@@ -18,6 +18,9 @@ Route::post('user/resetpwd','Admin\StudioUserController@resetPassword')->middlew
 Route::post('user/resetbyphone','Admin\StudioUserController@resetPasswordPhone');
 //头像上传接口
 Route::post('user/uploadheadportrait','Admin\StudioUserController@uploadHeadPortrait')->middleware(['sessionLoginVerify']);
+//补全用户信息
+Route::post('user/supplyuserinfo','Admin\StudioUserController@supplyUserInfo')->middleware(['sessionLoginVerify']);
+
 Route::post('user/logout','Admin\StudioUserController@logout')->middleware(['sessionLoginVerify']);
 //工作室接口列表
 //申请工作室信息
@@ -46,7 +49,13 @@ Route::post('studio/deluyimg','Admin\CraftController@delImage')->middleware(['se
 Route::get('studio/modifyArticle','Admin\CraftController@modifyArticle')->middleware(['sessionLoginVerify']);
 //时间轴修改页面
 Route::get('studio/modifyTime','Admin\CraftController@modifyTimeData')->middleware(['sessionLoginVerify']);
+//图片库---返回某工作室下的所有图片
+Route::get('studio/allimges','Admin\CraftController@returnAllImages')->middleware(['sessionLoginVerify']);
 
+//文章图片添加
+Route::post('craft/uploadarticleimages','Admin\CraftController@uploadArticleImages')->middleware(['sessionLoginVerify']);
+//文章图片获取
+Route::get('craft/getarticleimages','Admin\CraftController@getArticleImages')->middleware(['sessionLoginVerify']);
 //手机端手机预览雕件
 Route::get('wap/show','Wap\CraftController@showDetail');
 //手机端查看所有已发布作品

@@ -34,6 +34,7 @@ class CraftImg extends Model
 					->where('craft_id',$craftid)
 					->select('describe','img_url')
 					->orderBy('created_time','desc')
+					->orderBy('img_id','desc')
 					->first();
 		if(!empty($one)){
 			return $one->toArray();
@@ -60,6 +61,31 @@ class CraftImg extends Model
 					->where('craft_id',$craft_id)
 					->delete();
 	}
+	//返回工作室下所有图片
+	public function returnImages($studioid){
+		return $this->where('studio_id',$studioid)
+					->select('img_url')
+					->orderBy('created_time','desc')
+			        ->get()->toArray();
+	/*	return $this->orderBy('created_time','desc')
+					->take(10)
+					->pluck('img_url');
+*/	}
+	//插入大师代表作图片和描述
+	public function insertDelegate($data,$delegate){
+		foreach ($delegate as $key => $value) {
+			$this->insertGetId(
+					array('studio_user_id' => $data['user_id'],
+						  'studio_id' => $data['studio_id'],
+						  'describe' => $value['describe'],
+						  'img_url' => $value['img_url'],
+						  'is_delegate' => 1
+ 						)
+				);
+		}
+
+	}
+
 }
 
 ?>
